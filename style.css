@@ -1,0 +1,245 @@
+/* 通用重置 */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5; /* 略微灰色背景 */
+    color: #333;
+    font-size: 14px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 1. 顶部区域样式 */
+.top-bar-container {
+    padding: 15px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.top-bar-content {
+    width: 1200px; /* 假设页面内容宽度为1200px */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo 和 城市选择 */
+.logo-area {
+    display: flex;
+    align-items: baseline;
+}
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00a0e9; /* 蓝色 */
+    margin-right: 10px;
+}
+.slogan-text {
+    font-size: 10px;
+    color: #666;
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+    margin-right: 20px;
+}
+.city-select {
+    color: #333;
+    font-size: 14px;
+    margin-left: 10px;
+}
+.city-select::before {
+    content: "📍"; /* 模仿位置图标 */
+    margin-right: 5px;
+}
+.city-select [更换] {
+    color: #00a0e9;
+    margin-left: 5px;
+}
+
+/* 搜索区域 */
+.search-area {
+    display: flex;
+    border: 2px solid #00a0e9; /* 蓝色边框 */
+    border-radius: 4px;
+    overflow: hidden;
+}
+.search-input {
+    padding: 8px 10px;
+    border: none;
+    width: 300px;
+    font-size: 14px;
+    outline: none;
+}
+.search-button {
+    background-color: #00a0e9; /* 蓝色背景 */
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 2. 主导航栏样式 */
+.main-nav-container {
+    background-color: #00a0e9; /* 深蓝色背景 */
+    height: 40px;
+}
+
+.main-nav-list {
+    width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.main-nav-list li a {
+    color: #fff;
+    padding: 0 18px;
+    line-height: 40px;
+    font-size: 16px;
+    display: block;
+    transition: background-color 0.3s;
+}
+.main-nav-list li a:hover,
+.main-nav-list li a.active {
+    background-color: #008cd4; /* 鼠标悬停或选中时的深色背景 */
+}
+
+/* 3. 主要内容区域布局 (Flexbox) */
+.main-content-container {
+    width: 1200px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-body-left {
+    width: 68%; /* 占比较大 */
+    min-height: 500px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.sidebar-right {
+    width: 30%; /* 占比较小 */
+}
+
+/* 右侧边栏/快速挂号区的样式 */
+.service-stats {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    font-size: 14px;
+}
+.stats-number {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+.orange {
+    color: #ff6600; /* 橙色，用于数字 */
+}
+
+.quick-booking-form {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.quick-booking-form h4 {
+    margin-top: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Tab 切换样式 */
+.booking-tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+.booking-tabs .tab {
+    padding: 5px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.booking-tabs .tab.active {
+    color: #00a0e9;
+    border-bottom: 2px solid #00a0e9;
+    font-weight: bold;
+}
+
+/* 表单输入组 */
+.booking-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.booking-input-group label {
+    width: 60px;
+    text-align: right;
+    margin-right: 10px;
+    color: #666;
+}
+.booking-input-group input,
+.booking-input-group select {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    appearance: none; /* 移除默认的select样式 */
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#333"><polygon points="0,0 10,0 5,10"/></svg>'); /* 模仿下拉箭头 */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+/* 城市输入框的特殊样式，模仿右侧的定位图标 */
+.booking-input-group input[value="深圳"] {
+    background-image: none;
+    background-color: #f9f9f9;
+    padding-right: 10px;
+    /* 可以在::after或使用背景图模仿右侧的小图标 */
+}
+
+
+/* 快速预约按钮 */
+.quick-booking-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ff6600; /* 橙色背景 */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+.quick-booking-button:hover {
+    background-color: #e55c00;
+}
+
+/* 占位符样式 */
+.placeholder {
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #ccc;
+    border: 1px dashed #eee;
+}

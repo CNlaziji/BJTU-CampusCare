@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./config/database');
 const corsOptions = require('./config/cors');
 const userRoutes = require('./routes/userRoutes');
+const captchaRoutes = require('./routes/captchaRoutes');
 
 // 加载环境变量
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
 
 // 路由
 app.use('/api/users', userRoutes);
+app.use('/api/captcha', captchaRoutes);
 
 app.get('/', (req, res) => {
   res.send('医院管理系统后端API');

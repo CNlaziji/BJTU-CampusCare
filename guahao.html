@@ -1,0 +1,636 @@
+<!DOCTYPE html> 
+<html lang="zh-CN"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>张医生 - 预约挂号 - BJTU</title> 
+    <style>
+        /* 通用重置 */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* 略微灰色背景 */
+            color: #333;
+            font-size: 14px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* 页面容器 */
+        .page-container {
+            width: 98%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 通用悬停动画效果 */
+        .hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* 过渡动画 */
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        /* 1. 顶部区域样式 */
+        .top-bar-container {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .top-bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Logo 和 城市选择 */
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00a0e9; /* 蓝色 */
+            margin-right: 10px;
+        }
+        .slogan-text {
+            font-size: 10px;
+            color: #666;
+            border-left: 1px solid #ccc;
+            padding-left: 10px;
+            margin-right: 20px;
+        }
+        
+        /* 搜索区域 */
+        .search-area {
+            display: flex;
+            border: 2px solid #00a0e9; /* 蓝色边框 */
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+        }
+        .search-input {
+            padding: 8px 10px;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-button {
+            background-color: #00a0e9; /* 蓝色背景 */
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* 2. 主导航栏样式 */
+        .main-nav-container {
+            background-color: #0072c6; /* 深蓝色背景 */
+            height: 42px;
+        }
+        
+        .main-nav-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .main-nav-list li a {
+            color: #fff;
+            padding: 0 20px;
+            line-height: 42px;
+            font-size: 16px;
+            display: block;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .main-nav-list li a:hover,
+        .main-nav-list li a.active {
+            background-color: #005ba1; /* 鼠标悬停或选中时的深色背景 */
+        }
+        
+        /* 3. 挂号页面样式 */
+        .guahao-container {
+            padding: 20px 0;
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumb {
+            font-size: 12px;
+            color: #999;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: #00a0e9;
+        }
+        
+        /* 医生信息 */
+        .doctor-info {
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .doctor-profile {
+            display: flex;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            gap: 30px;
+        }
+        
+        .doctor-photo-large {
+            width: 180px;
+            height: 180px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .doctor-details {
+            flex: 1;
+        }
+        
+        .doctor-name-title-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .doctor-name-main {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        
+        .doctor-title-main {
+            background-color: #00a0e9;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .doctor-dept-main {
+            background-color: #f0f0f0;
+            color: #666;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .doctor-hospital {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .doctor-stats-main {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .doctor-stats-main strong {
+            color: #333;
+        }
+        
+        .doctor-specialty {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* 排班区域 */
+        .schedule-area {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        
+        .section-title small {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+        }
+        
+        .schedule-header {
+            border-bottom: 2px solid #00a0e9;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .schedule-days-header {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .day-item {
+            display: inline-block;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        
+        .day-item.active {
+            background-color: #00a0e9;
+            color: #fff;
+        }
+        
+        .nav-arrow {
+            color: #00a0e9;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .schedule-tip {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        /* 医生排班详情 */
+        .doctor-schedule-detail {
+            margin-top: 20px;
+        }
+        
+        .schedule-time-slot {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+        }
+        
+        .slot-type {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .available-count {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .available-count strong {
+            color: #00a0e9;
+        }
+        
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .time-slot-item {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .time-slot-item.bookable {
+            border-color: #00a0e9;
+            color: #00a0e9;
+            background-color: #f0f7fa;
+        }
+        
+        .time-slot-item.bookable:hover {
+            background-color: #00a0e9;
+            color: #fff;
+        }
+        
+        .time-slot-item.booked {
+            border-color: #ddd;
+            color: #999;
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        /* 预约说明 */
+        .booking-notes {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        .booking-notes h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .booking-notes ul {
+            color: #666;
+            line-height: 1.8;
+            list-style: disc;
+            padding-left: 20px;
+        }
+        
+        .booking-notes li {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+    </style>
+    <script>
+        // 医生数据模拟
+        const doctorsData = {
+            "wang": {
+                name: "王医生",
+                title: "主任医师",
+                department: "内科",
+                hospital: "北京交通大学校医院",
+                appointments: 238,
+                followers: 156,
+                rating: 4.9,
+                specialty: "心血管疾病、高血压、冠心病等内科常见疾病的诊治，有着丰富的临床经验。",
+                photo: "path/to/dr_image_wang.jpg"
+            },
+            "li": {
+                name: "李医生",
+                title: "副主任医师",
+                department: "内科",
+                hospital: "北京交通大学校医院",
+                appointments: 182,
+                followers: 124,
+                rating: 4.7,
+                specialty: "消化系统疾病的诊断与治疗，擅长胃炎、肝炎等疾病的管理。",
+                photo: "path/to/dr_image_li.jpg"
+            },
+            "zhang": {
+                name: "张医生",
+                title: "主治医师",
+                department: "内科",
+                hospital: "北京交通大学校医院",
+                appointments: 149,
+                followers: 98,
+                rating: 4.6,
+                specialty: "内分泌系统疾病的诊治，如糖尿病、甲状腺疾病等，注重个体化治疗。",
+                photo: "path/to/dr_image_zhang.jpg"
+            },
+            "chu": {
+                name: "储真真",
+                title: "主任医师",
+                department: "内科",
+                hospital: "北京交通大学校医院",
+                appointments: 256,
+                followers: 178,
+                rating: 4.8,
+                specialty: "呼吸系统疾病的诊治，如哮喘、慢性支气管炎等，有丰富的临床经验。",
+                photo: "path/to/dr_image_chu.jpg"
+            }
+        };
+
+        // 获取URL参数
+        function getURLParameter(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        // 更新页面内容
+        function updateDoctorPage() {
+            // 获取医生ID参数，默认为wang
+            const doctorId = getURLParameter('doctorId') || 'wang';
+            
+            // 获取对应医生数据
+            const doctor = doctorsData[doctorId] || doctorsData.wang;
+            
+            // 更新页面内容
+            document.getElementById('doctorName').textContent = doctor.name;
+            document.getElementById('doctorTitle').textContent = doctor.title;
+            document.getElementById('doctorDept').textContent = doctor.department;
+            document.getElementById('doctorAppointments').textContent = doctor.appointments;
+            document.getElementById('doctorFollowers').textContent = doctor.followers;
+            document.getElementById('doctorRating').textContent = doctor.rating;
+            document.getElementById('doctorSpecialty').innerHTML = `<strong>擅长：</strong>${doctor.specialty}`;
+            document.getElementById('doctorPhoto').src = doctor.photo;
+            document.getElementById('doctorPhoto').alt = doctor.name;
+            document.getElementById('bookingTitle').textContent = `${doctor.name}预约挂号`;
+            document.getElementById('scheduleTitle').textContent = `${doctor.name}排班`;
+            document.title = `${doctor.name} - 预约挂号 - BJTU`;
+            
+            // 更新医生详情页链接
+            document.getElementById('doctorDetailLink').href = `doctor.html?doctorId=${doctorId}`;
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', function() {
+            updateDoctorPage();
+        });
+
+        // 日期切换功能
+        document.querySelectorAll('.day-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 移除所有日期的active类
+                document.querySelectorAll('.day-item').forEach(day => {
+                    day.classList.remove('active');
+                });
+                // 给当前点击的日期添加active类
+                this.classList.add('active');
+                // 这里可以添加根据日期加载不同排班数据的逻辑
+            });
+        });
+
+        // 时间段点击功能
+        document.querySelectorAll('.shift-item.bookable').forEach(item => {
+            item.addEventListener('click', function() {
+                // 可以在这里添加预约逻辑，例如打开确认对话框
+                const timeSlot = this.textContent;
+                const doctorName = document.getElementById('doctorName').textContent;
+                const activeDay = document.querySelector('.day-item.active').textContent.split('\n')[0];
+                
+                if (confirm(`确认预约${doctorName} ${activeDay} ${timeSlot}的号源吗？`)) {
+                    alert('预约成功！请按时到医院就诊。');
+                    // 这里可以添加预约成功后的逻辑，例如跳转到预约成功页面
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- 顶部区域 -->
+    <div class="top-bar-container">
+        <div class="page-container">
+            <div class="top-bar-content">
+                <!-- Logo 区域 -->
+                <div class="logo-area">
+                    <span class="logo-text">BJTU</span>
+                    <span class="slogan-text">北京交通大学校医院</span>
+                </div>
+                
+                <!-- 搜索区域 -->
+                <div class="search-area">
+                    <input type="text" class="search-input" placeholder="搜索医生、科室">
+                    <button class="search-button">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主导航栏 -->
+    <div class="main-nav-container">
+        <div class="page-container">
+            <ul class="main-nav-list">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="guahao.html" class="active">预约挂号</a></li>
+            <li><a href="doctor.html">医生主页</a></li>
+        </ul>
+        </div>
+    </div>
+    
+    <!-- 挂号页面内容 -->
+    <div class="page-container guahao-container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="index.html">首页</a> &gt; 
+            <a href="doctor.html">医生详情</a> &gt; 
+            <span>王医生预约挂号</span>
+        </div>
+
+        <!-- 医生信息 -->
+        <section class="doctor-info">
+            <div class="doctor-profile">
+                <img src="path/to/dr_image_wang.jpg" alt="王医生" class="doctor-photo-large">
+                <div class="doctor-details">
+                    <div class="doctor-name-title-main">
+                        <h1 class="doctor-name-main">王医生</h1>
+                        <span class="doctor-title-main">主任医师</span>
+                        <span class="doctor-dept-main">内科</span>
+                    </div>
+                    <div class="doctor-hospital">北京交通大学校医院</div>
+                    <div class="doctor-stats-main">
+                        <span class="stat-item">预约量：<strong>238</strong></span>
+                        <span class="stat-item">粉丝数：<strong>156</strong></span>
+                        <span class="stat-item">满意度：<strong>4.9</strong>/5</span>
+                    </div>
+                    <div class="doctor-specialty">
+                        <strong>擅长：</strong>心血管疾病、高血压、冠心病等内科常见疾病的诊治，有着丰富的临床经验。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 排班区域 -->
+        <section class="schedule-area">
+            <h2 class="section-title">王医生排班 <small>（放号时间和可预约天数，请以医院为准）</small></h2>
+
+            <div class="schedule-header">
+                <div class="schedule-days-header">
+                    <span class="day-item">10/30<br>周四</span>
+                    <span class="day-item">10/31<br>周五</span>
+                    <span class="day-item active">11/01<br>周六</span>
+                    <span class="day-item">11/02<br>周日</span>
+                    <span class="day-item">11/03<br>周一</span>
+                    <span class="day-item">11/04<br>周二</span>
+                    <span class="day-item">11/05<br>周三</span>
+                    <span class="nav-arrow">→</span>
+                </div>
+            </div>
+
+            <div class="schedule-tip">
+                号源更新可能会有延迟，请选择具体排班日期查看实时动态！
+            </div>
+
+            <!-- 王医生排班详情 -->
+            <div class="doctor-schedule-detail">
+                <!-- 上午排班 -->
+                <div class="schedule-time-slot">
+                    <div class="slot-header">
+                        <span class="slot-type">上午 (08:00-12:00)</span>
+                        <span class="available-count">剩余号源：<strong>12</strong></span>
+                    </div>
+                    <div class="time-slots">
+                        <div class="time-slot-item bookable">08:00-08:30</div>
+                        <div class="time-slot-item bookable">08:30-09:00</div>
+                        <div class="time-slot-item bookable">09:00-09:30</div>
+                        <div class="time-slot-item bookable">09:30-10:00</div>
+                        <div class="time-slot-item bookable">10:00-10:30</div>
+                        <div class="time-slot-item bookable">10:30-11:00</div>
+                        <div class="time-slot-item bookable">11:00-11:30</div>
+                        <div class="time-slot-item booked">11:30-12:00</div>
+                    </div>
+                </div>
+
+                <!-- 下午排班 -->
+                <div class="schedule-time-slot">
+                    <div class="slot-header">
+                        <span class="slot-type">下午 (14:00-17:30)</span>
+                        <span class="available-count">剩余号源：<strong>8</strong></span>
+                    </div>
+                    <div class="time-slots">
+                        <div class="time-slot-item bookable">14:00-14:30</div>
+                        <div class="time-slot-item bookable">14:30-15:00</div>
+                        <div class="time-slot-item booked">15:00-15:30</div>
+                        <div class="time-slot-item booked">15:30-16:00</div>
+                        <div class="time-slot-item bookable">16:00-16:30</div>
+                        <div class="time-slot-item bookable">16:30-17:00</div>
+                        <div class="time-slot-item bookable">17:00-17:30</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预约说明 -->
+            <div class="booking-notes">
+                <h3>预约须知</h3>
+                <ul>
+                    <li>请至少提前30分钟到达医院，携带有效证件（学生证/教师证）</li>
+                    <li>如需取消预约，请提前4小时操作，以免影响您的预约信用</li>
+                    <li>初诊患者请提前准备好病史资料</li>
+                    <li>每人每日限预约一个号源</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

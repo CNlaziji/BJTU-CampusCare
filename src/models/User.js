@@ -44,16 +44,9 @@ const UserModel = {
       phone: {
         field: 'phone',
         type: DataTypes.STRING(20),
-        allowNull: true,
+        allowNull: false,
         unique: true,
         comment: '手机号码'
-      },
-      email: {
-        field: 'email',
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        unique: true,
-        comment: '邮箱地址，用于找回密码'
       },
       createdAt: {
         field: 'created_at',

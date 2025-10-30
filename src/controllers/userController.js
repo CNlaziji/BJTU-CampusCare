@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { sendVerificationEmail } = require('../utils/emailService');
+const { sendVerificationSms } = require('../utils/smsService');
 require('dotenv').config();
 
 // JWT相关配置
@@ -23,7 +23,7 @@ exports.getAllUsers = async (req, res) => {
 // 创建新用户
 exports.createUser = async (req, res) => {
   try {
-    const { username, password, role, phone, email } = req.body;
+    const { username, password, role, phone } = req.body;
     
     // 基本验证
     if (!username || !password) {
@@ -34,13 +34,13 @@ exports.createUser = async (req, res) => {
       });
     }
     
-    // 如果提供了邮箱，验证邮箱格式
-    if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+    // 验证手机号格式（如果提供）
+    if (phone) {
+      const phoneRegex = /^1[3-9]\d{9}$/;
+      if (!phoneRegex.test(phone)) {
         return res.status(400).json({
           code: 400,
-          message: '请输入正确的邮箱地址',
+          message: '请输入正确的手机号码',
           data: null
         });
       }
@@ -59,8 +59,7 @@ exports.createUser = async (req, res) => {
       username,
       password: hashedPassword,
       role: role || 'patient',
-      phone: phone || null,
-      email: email || null
+      phone: phone || null
       // verifyStatus有默认值'unverified'
     });
     
@@ -238,33 +237,33 @@ const verificationCodes = {};
 // 发送验证码
 exports.sendVerificationCode = async (req, res) => {
   try {
-    const { username, email } = req.body;
+    const { username, phone } = req.body;
     
     // 基本验证
-    if (!username || !email) {
+    if (!username || !phone) {
       return res.status(400).json({
         code: 400,
-        message: '请输入用户名和邮箱',
+        message: '请输入用户名和手机号',
         data: null
       });
     }
     
-    // 邮箱格式验证
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // 手机号格式验证
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    if (!phoneRegex.test(phone)) {
       return res.status(400).json({
         code: 400,
-        message: '请输入正确的邮箱地址',
+        message: '请输入正确的手机号码',
         data: null
       });
     }
     
-    // 查找用户 - 同时验证用户名和邮箱
-    const user = await User.findOne({ where: { username, email } });
+    // 查找用户 - 同时验证用户名和手机号
+    const user = await User.findOne({ where: { username, phone } });
     if (!user) {
       return res.status(404).json({
         code: 404,
-        message: '用户名与邮箱不匹配或未注册',
+        message: '用户名与手机号不匹配或未注册',
         data: null
       });
     }
@@ -272,27 +271,27 @@ exports.sendVerificationCode = async (req, res) => {
     // 生成验证码
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // 存储验证码（有效期5分钟）- 使用username+email作为键
-    const key = `${username}_${email}`;
+    // 存储验证码（有效期5分钟）- 使用username+phone作为键
+    const key = `${username}_${phone}`;
     verificationCodes[key] = {
       code,
       expires: Date.now() + 5 * 60 * 1000,
       userId: user.userId,
-      email: user.email
+      phone: user.phone
     };
     
-    // 调用邮件服务发送验证码
-    const emailSent = await sendVerificationEmail(email, username, code);
+    // 调用短信服务发送验证码
+    const smsSent = await sendVerificationSms(phone, username, code);
     
-    if (!emailSent) {
+    if (!smsSent) {
       return res.status(500).json({
         code: 500,
-        message: '发送验证码邮件失败，请稍后重试',
+        message: '发送验证码短信失败，请稍后重试',
         data: null
       });
     }
     
-    console.log(`验证码邮件已发送到: ${email}`);
+    console.log(`验证码短信已发送到: ${phone}`);
     
     res.status(200).json({
       code: 200,
@@ -312,13 +311,13 @@ exports.sendVerificationCode = async (req, res) => {
 // 验证验证码
 exports.verifyCode = async (req, res) => {
   try {
-    const { username, email, code } = req.body;
+    const { username, phone, code } = req.body;
     
     // 基本验证
-    if (!username || !email || !code) {
+    if (!username || !phone || !code) {
       return res.status(400).json({
         code: 400,
-        message: '请输入用户名、邮箱和验证码',
+        message: '请输入用户名、手机号和验证码',
         data: null
       });
     }
@@ -333,8 +332,8 @@ exports.verifyCode = async (req, res) => {
       });
     }
     
-    // 使用username+email作为键检查验证码
-    const key = `${username}_${email}`;
+    // 使用username+phone作为键检查验证码
+    const key = `${username}_${phone}`;
     const storedCode = verificationCodes[key];
     if (!storedCode) {
       return res.status(400).json({
@@ -365,7 +364,7 @@ exports.verifyCode = async (req, res) => {
     
     // 生成重置令牌（有效期10分钟）
     const resetToken = jwt.sign(
-      { username, email: storedCode.email, userId: storedCode.userId },
+      { username, phone: storedCode.phone, userId: storedCode.userId },
       JWT_SECRET,
       { expiresIn: '10m' }
     );
@@ -429,6 +428,15 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({
         code: 404,
         message: '用户不存在',
+        data: null
+      });
+    }
+    
+    // 验证用户信息一致性
+    if (user.username !== decoded.username || user.phone !== decoded.phone) {
+      return res.status(401).json({
+        code: 401,
+        message: '用户信息不匹配',
         data: null
       });
     }

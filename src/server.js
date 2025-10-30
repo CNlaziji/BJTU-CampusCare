@@ -5,6 +5,7 @@ const { connectDB } = require('./config/database');
 const corsOptions = require('./config/cors');
 const userRoutes = require('./routes/userRoutes');
 const captchaRoutes = require('./routes/captchaRoutes');
+const { verifyEmailConfig } = require('./utils/emailService');
 
 // 加载环境变量
 dotenv.config();
@@ -46,7 +47,14 @@ app.use((err, req, res, next) => {
 // 连接数据库并启动服务器 - 最后调用
 const startServer = async () => {
   try {
+    // 验证邮件配置
+    console.log('验证邮件服务配置...');
+    await verifyEmailConfig();
+    
+    // 连接数据库
     await connectDB();
+    
+    // 启动服务器
     app.listen(PORT, () => {
       console.log(`服务器运行在 http://localhost:${PORT}`);
     });

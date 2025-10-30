@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { sendVerificationEmail } = require('../utils/emailService');
 require('dotenv').config();
 
 // JWT相关配置
@@ -22,7 +23,7 @@ exports.getAllUsers = async (req, res) => {
 // 创建新用户
 exports.createUser = async (req, res) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password, role, phone, email } = req.body;
     
     // 基本验证
     if (!username || !password) {
@@ -31,6 +32,18 @@ exports.createUser = async (req, res) => {
         message: '请填写必填字段',
         data: null
       });
+    }
+    
+    // 如果提供了邮箱，验证邮箱格式
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          code: 400,
+          message: '请输入正确的邮箱地址',
+          data: null
+        });
+      }
     }
     
     // 密码加密
@@ -45,7 +58,9 @@ exports.createUser = async (req, res) => {
       userId: newUserId,
       username,
       password: hashedPassword,
-      role: role || 'patient'
+      role: role || 'patient',
+      phone: phone || null,
+      email: email || null
       // verifyStatus有默认值'unverified'
     });
     
@@ -212,6 +227,226 @@ exports.verifyUser = async (req, res) => {
     res.status(500).json({
       code: 500,
       message: '身份核验过程中发生错误',
+      data: null
+    });
+  }
+};
+
+// 存储验证码（实际项目中应该使用Redis等持久化存储）
+const verificationCodes = {};
+
+// 发送验证码
+exports.sendVerificationCode = async (req, res) => {
+  try {
+    const { username, email } = req.body;
+    
+    // 基本验证
+    if (!username || !email) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入用户名和邮箱',
+        data: null
+      });
+    }
+    
+    // 邮箱格式验证
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入正确的邮箱地址',
+        data: null
+      });
+    }
+    
+    // 查找用户 - 同时验证用户名和邮箱
+    const user = await User.findOne({ where: { username, email } });
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: '用户名与邮箱不匹配或未注册',
+        data: null
+      });
+    }
+    
+    // 生成验证码
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // 存储验证码（有效期5分钟）- 使用username+email作为键
+    const key = `${username}_${email}`;
+    verificationCodes[key] = {
+      code,
+      expires: Date.now() + 5 * 60 * 1000,
+      userId: user.userId,
+      email: user.email
+    };
+    
+    // 调用邮件服务发送验证码
+    const emailSent = await sendVerificationEmail(email, username, code);
+    
+    if (!emailSent) {
+      return res.status(500).json({
+        code: 500,
+        message: '发送验证码邮件失败，请稍后重试',
+        data: null
+      });
+    }
+    
+    console.log(`验证码邮件已发送到: ${email}`);
+    
+    res.status(200).json({
+      code: 200,
+      message: '验证码已发送',
+      data: null
+    });
+  } catch (error) {
+    console.error('发送验证码失败:', error);
+    res.status(500).json({
+      code: 500,
+      message: '发送验证码失败',
+      data: null
+    });
+  }
+};
+
+// 验证验证码
+exports.verifyCode = async (req, res) => {
+  try {
+    const { username, email, code } = req.body;
+    
+    // 基本验证
+    if (!username || !email || !code) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入用户名、邮箱和验证码',
+        data: null
+      });
+    }
+    
+    // 验证码格式验证
+    const codeRegex = /^\d{6}$/;
+    if (!codeRegex.test(code)) {
+      return res.status(400).json({
+        code: 400,
+        message: '验证码格式不正确',
+        data: null
+      });
+    }
+    
+    // 使用username+email作为键检查验证码
+    const key = `${username}_${email}`;
+    const storedCode = verificationCodes[key];
+    if (!storedCode) {
+      return res.status(400).json({
+        code: 400,
+        message: '请先发送验证码',
+        data: null
+      });
+    }
+    
+    // 检查验证码是否过期
+    if (Date.now() > storedCode.expires) {
+      delete verificationCodes[key];
+      return res.status(400).json({
+        code: 400,
+        message: '验证码已过期，请重新发送',
+        data: null
+      });
+    }
+    
+    // 验证验证码
+    if (storedCode.code !== code) {
+      return res.status(400).json({
+        code: 400,
+        message: '验证码错误',
+        data: null
+      });
+    }
+    
+    // 生成重置令牌（有效期10分钟）
+    const resetToken = jwt.sign(
+      { username, email: storedCode.email, userId: storedCode.userId },
+      JWT_SECRET,
+      { expiresIn: '10m' }
+    );
+    
+    // 清除已验证的验证码
+    delete verificationCodes[key];
+    
+    res.status(200).json({
+      code: 200,
+      message: '验证码验证成功',
+      data: { resetToken }
+    });
+  } catch (error) {
+    console.error('验证验证码失败:', error);
+    res.status(500).json({
+      code: 500,
+      message: '验证验证码失败',
+      data: null
+    });
+  }
+};
+
+// 重置密码
+exports.resetPassword = async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+    
+    // 基本验证
+    if (!resetToken || !newPassword) {
+      return res.status(400).json({
+        code: 400,
+        message: '请提供重置令牌和新密码',
+        data: null
+      });
+    }
+    
+    // 密码强度验证
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        code: 400,
+        message: '密码长度不能少于6位',
+        data: null
+      });
+    }
+    
+    // 验证重置令牌
+    let decoded;
+    try {
+      decoded = jwt.verify(resetToken, JWT_SECRET);
+    } catch (error) {
+      return res.status(401).json({
+        code: 401,
+        message: '无效的重置令牌',
+        data: null
+      });
+    }
+    
+    // 查找用户
+    const user = await User.findOne({ where: { userId: decoded.userId } });
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: '用户不存在',
+        data: null
+      });
+    }
+    
+    // 更新密码
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedPassword });
+    
+    res.status(200).json({
+      code: 200,
+      message: '密码重置成功',
+      data: null
+    });
+  } catch (error) {
+    console.error('重置密码失败:', error);
+    res.status(500).json({
+      code: 500,
+      message: '重置密码失败',
       data: null
     });
   }

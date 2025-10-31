@@ -37,9 +37,9 @@
               <el-input
                   v-model="loginForm.captcha"
                   placeholder="请输入验证码"
-                  :prefix-icon="Lock"
+                  :prefix-icon="CircleCheck"
               ></el-input>
-              <div class="captcha-label">验证码</div>
+              <img :src="captchaImageSrc" alt="验证码" class="captcha-image" @click="refreshCaptcha" />
             </div>
           </el-form-item>
 
@@ -62,11 +62,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginUser } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
+import { CircleCheck } from '@element-plus/icons-vue' // 导入验证码图标
+import { generateCaptcha, verifyCaptcha as apiVerifyCaptcha } from '@/api/captcha' // 导入验证码API
 import BannerCarousel from '@/components/BannerCarousel.vue'
 import main1 from '@/assets/banners/main1.jpg'
 import main2 from '@/assets/banners/main2.jpg'
@@ -79,10 +81,27 @@ const loginForm = ref({
   password: '',
   captcha: ''
 })
+const captchaImageSrc = ref('')
+const currentCaptchaId = ref(null)
 const rememberMe = ref(false)
 
 // 左侧轮播使用本地图片资源（已放置于 src/assets/banners/）
 const carouselImages = [main1, main2, main3, main4]
+
+// 生成验证码
+const refreshCaptcha = async () => {
+  try {
+    const res = await generateCaptcha()
+    if (res.success) {
+      captchaImageSrc.value = res.data.image
+      currentCaptchaId.value = res.data.captchaId
+      loginForm.value.captcha = '' // 清空验证码输入框
+    }
+  } catch (error) {
+    ElMessage.error('验证码生成失败')
+    console.error('生成验证码失败:', error)
+  }
+}
 
 const rules = ref({
   username: [
@@ -103,6 +122,17 @@ const handleLogin = async () => {
   await loginFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
+        // 1. 验证验证码
+        const captchaRes = await apiVerifyCaptcha({
+          captchaId: currentCaptchaId.value,
+          code: loginForm.value.captcha
+        })
+        if (!captchaRes.success) {
+          ElMessage.error(captchaRes.message || '验证码错误')
+          refreshCaptcha() // 验证失败，刷新验证码
+          return // 停止登录流程
+        }
+
         const response = await loginUser(loginForm.value)
         localStorage.setItem('token', response.data.token)
         localStorage.setItem('user', JSON.stringify(response.data.user))
@@ -115,6 +145,11 @@ const handleLogin = async () => {
     }
   })
 }
+
+// 页面加载时生成验证码
+onMounted(() => {
+  refreshCaptcha()
+})
 </script>
 
 <style scoped>
@@ -186,16 +221,13 @@ h2 {
 .captcha-row .el-input {
   flex: 1;
 }
-.captcha-label {
-  min-width: 120px;
+.captcha-image {
   height: 40px;
-  border: 1px solid #e5e7eb;
+  width: 120px; /* 确保图片宽度和后端定义一致 */
+  cursor: pointer;
+  vertical-align: middle;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #606266;
-  background: #fff;
+  border: 1px solid #e5e7eb;
 }
 @media (max-width: 960px) {
   .overlay-right {

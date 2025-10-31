@@ -28,24 +28,6 @@
             ></el-input>
           </el-form-item>
 
-          <el-form-item prop="confirmPassword">
-            <el-input
-                v-model="registerForm.confirmPassword"
-                type="password"
-                placeholder="请再次输入密码"
-                :prefix-icon="Lock"
-                show-password
-            ></el-input>
-          </el-form-item>
-
-          <el-form-item prop="realName">
-            <el-input v-model="registerForm.realName" placeholder="请输入真实姓名" :prefix-icon="Postcard"></el-input>
-          </el-form-item>
-
-          <el-form-item prop="idCard">
-            <el-input v-model="registerForm.idCard" placeholder="请输入身份证号" :prefix-icon="Postcard"></el-input>
-          </el-form-item>
-
           
 
           <el-form-item>
@@ -70,7 +52,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { registerUser } from '@/api/user'
 import { ElMessage } from 'element-plus'
-import { User, Lock, Postcard } from '@element-plus/icons-vue'
+import { User, Lock } from '@element-plus/icons-vue'
 import BannerCarousel from '@/components/BannerCarousel.vue'
 import main1 from '@/assets/banners/main1.jpg'
 import main2 from '@/assets/banners/main2.jpg'
@@ -81,9 +63,6 @@ const router = useRouter()
 const registerForm = ref({
   username: '',
   password: '',
-  confirmPassword: '',
-  realName: '',
-  idCard: '',
   role: 'patient'
 })
 const agreeTerms = ref(false)
@@ -96,30 +75,6 @@ const rules = ref({
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
-  ],
-  confirmPassword: [
-    { required: true, message: '请再次输入密码', trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        if (value !== registerForm.value.password) {
-          callback(new Error('两次输入的密码不一致'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ],
-  realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' }
-  ],
-  idCard: [
-    { required: true, message: '请输入身份证号', trigger: 'blur' },
-    {
-      pattern: /^[0-9Xx]{18}$/,
-      message: '身份证号格式不正确',
-      trigger: 'blur'
-    }
   ]
 })
 

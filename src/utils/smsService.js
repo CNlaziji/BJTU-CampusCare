@@ -185,7 +185,7 @@ async function sendSpugSms(phone, username, code) {
       return false;
     }
     
-    // 构建请求URL，添加验证码和目标手机号参数
+    // 构建Spug推送URL（使用code和targets作为URL参数）
     const requestUrl = `${spugPushUrl}?code=${code}&targets=${phone}`;
     
     console.log(`===== Spug短信推送 =====`);

@@ -1,0 +1,816 @@
+/* 通用重置 */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5; /* 略微灰色背景 */
+    color: #333;
+    font-size: 14px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 1. 顶部区域样式 */
+.top-bar-container {
+    padding: 15px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.top-bar-content {
+    width: 1200px; /* 假设页面内容宽度为1200px */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo 和 城市选择 */
+.logo-area {
+    display: flex;
+    align-items: baseline;
+}
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00a0e9; /* 蓝色 */
+    margin-right: 10px;
+}
+.slogan-text {
+    font-size: 10px;
+    color: #666;
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+    margin-right: 20px;
+}
+.city-select {
+    color: #333;
+    font-size: 14px;
+    margin-left: 10px;
+}
+.city-select::before {
+    content: "📍"; /* 模仿位置图标 */
+    margin-right: 5px;
+}
+.city-select [更换] {
+    color: #00a0e9;
+    margin-left: 5px;
+}
+
+/* 搜索区域 */
+.search-area {
+    display: flex;
+    border: 2px solid #00a0e9; /* 蓝色边框 */
+    border-radius: 4px;
+    overflow: hidden;
+}
+.search-input {
+    padding: 8px 10px;
+    border: none;
+    width: 300px;
+    font-size: 14px;
+    outline: none;
+}
+.search-button {
+    background-color: #00a0e9; /* 蓝色背景 */
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 2. 主导航栏样式 */
+.main-nav-container {
+    background-color: #00a0e9; /* 深蓝色背景 */
+    height: 40px;
+}
+
+.main-nav-list {
+    width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.main-nav-list li a {
+    color: #fff;
+    padding: 0 18px;
+    line-height: 40px;
+    font-size: 16px;
+    display: block;
+    transition: background-color 0.3s;
+}
+.main-nav-list li a:hover,
+.main-nav-list li a.active {
+    background-color: #008cd4; /* 鼠标悬停或选中时的深色背景 */
+}
+
+/* 3. 主要内容区域布局 (Flexbox) */
+.main-content-container {
+    width: 1200px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-body-left {
+    width: 68%; /* 占比较大 */
+    min-height: 500px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.sidebar-right {
+    width: 30%; /* 占比较小 */
+}
+
+/* 右侧边栏/快速挂号区的样式 */
+.service-stats {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    font-size: 14px;
+}
+.stats-number {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+.orange {
+    color: #ff6600; /* 橙色，用于数字 */
+}
+
+.quick-booking-form {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.quick-booking-form h4 {
+    margin-top: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Tab 切换样式 */
+.booking-tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+.booking-tabs .tab {
+    padding: 5px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.booking-tabs .tab.active {
+    color: #00a0e9;
+    border-bottom: 2px solid #00a0e9;
+    font-weight: bold;
+}
+
+/* 表单输入组 */
+.booking-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.booking-input-group label {
+    width: 60px;
+    text-align: right;
+    margin-right: 10px;
+    color: #666;
+}
+.booking-input-group input,
+.booking-input-group select {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    appearance: none; /* 移除默认的select样式 */
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#333"><polygon points="0,0 10,0 5,10"/></svg>'); /* 模仿下拉箭头 */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+/* 城市输入框的特殊样式，模仿右侧的定位图标 */
+.booking-input-group input[value="深圳"] {
+    background-image: none;
+    background-color: #f9f9f9;
+    padding-right: 10px;
+    /* 可以在::after或使用背景图模仿右侧的小图标 */
+}
+
+
+/* 快速预约按钮 */
+.quick-booking-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ff6600; /* 橙色背景 */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+.quick-booking-button:hover {
+    background-color: #e55c00;
+}
+
+/* 占位符样式 */
+.placeholder {
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #ccc;
+    border: 1px dashed #eee;
+}
+
+/* ----------------------------------- */
+/* 科室详情页特定样式 */
+/* ----------------------------------- */
+
+.guahao-detail-page {
+    /* 侧边栏可以移除或留空，这里主要关注左侧主体 */
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+    font-size: 12px;
+    color: #999;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+.breadcrumb a {
+    color: #00a0e9;
+}
+
+/* 1. 科室简介区域 */
+.department-info {
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #eee;
+    margin-bottom: 20px;
+    position: relative;
+}
+.department-info .title-bar {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
+.dept-name {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin: 0 10px 0 0;
+}
+.dept-category {
+    font-size: 12px;
+    color: #999;
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-right: 20px;
+}
+.hospital-name-link {
+    font-size: 14px;
+    color: #00a0e9;
+}
+.summary {
+    font-weight: bold;
+    color: #666;
+    margin-top: 15px;
+}
+.summary-content {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+.summary-content a {
+    color: #00a0e9;
+    margin-left: 5px;
+}
+.booking-count {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    font-size: 14px;
+    color: #999;
+}
+.booking-count .count-number {
+    font-size: 18px;
+    color: #ff6600;
+    font-weight: bold;
+}
+
+/* 2. 科室排班区域 */
+.schedule-area {
+    /* 保持主体区域的宽度 */
+}
+.section-title {
+    font-size: 18px;
+    color: #333;
+    margin: 0 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #00a0e9; /* 蓝色下划线 */
+}
+.section-title small {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+}
+
+/* 排班表主体布局 (Flexbox/Grid 都可以，这里用 Flexbox 模拟 Grid) */
+.schedule-header, .doctor-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+.schedule-header {
+    background-color: #f7f7f7;
+    font-weight: bold;
+    padding: 15px 0;
+    color: #333;
+}
+
+/* 列宽分配 (这里是关键) */
+.col-name, .col-skill, .col-service {
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+.col-name { width: 18%; } /* 医生信息 */
+.col-skill { width: 25%; } /* 擅长 */
+.col-service { width: 12%; } /* 服务统计 */
+.col-days { width: 45%; } /* 日期和排班表 */
+
+
+/* 日期列表头部 */
+.schedule-header .col-days {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    color: #666;
+    position: relative;
+}
+.schedule-header .day-item {
+    width: calc(100% / 7); /* 7天平均分配 */
+    line-height: 1.3;
+}
+.schedule-header .day-item.active {
+    color: #00a0e9; /* 突出今天的日期 */
+}
+.schedule-header .nav-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00a0e9;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 提示信息 */
+.schedule-tip {
+    text-align: center;
+    color: #ff6600;
+    background-color: #fff9f5;
+    padding: 8px;
+    font-size: 12px;
+    border: 1px solid #ffe9d7;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+/* 医生信息块 */
+.doctor-item {
+    align-items: stretch; /* 让所有列的高度一致 */
+    padding: 15px 0;
+}
+.doctor-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+.doctor-item .col-name {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+}
+.doctor-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    display: block;
+}
+.doctor-title {
+    color: #666;
+    font-size: 12px;
+    display: block;
+}
+.badges {
+    margin-top: 5px;
+}
+.badge {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    color: #fff;
+    margin-right: 3px;
+}
+.badge-reg { background-color: #00a0e9; } /* 挂号 */
+.badge-med { background-color: #ff6600; } /* 复诊/专科 */
+
+/* 服务统计 */
+.col-service {
+    color: #666;
+    line-height: 1.6;
+}
+.service-stat .stat-icon {
+    font-weight: bold;
+    color: #ff6600;
+    margin-right: 3px;
+}
+.service-stat strong {
+    color: #ff6600;
+}
+
+/* 排班时间表 */
+.schedule-grid {
+    display: flex;
+    justify-content: space-around;
+}
+.shift-wrapper {
+    width: calc(100% / 7);
+    text-align: center;
+    border-left: 1px solid #eee;
+    box-sizing: border-box;
+}
+.shift-wrapper:first-child {
+    border-left: none;
+}
+.shift-wrapper.active {
+    background-color: #f0faff; /* 突出今天的背景色 */
+}
+.shift-item {
+    font-size: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    color: #999;
+}
+.shift-item:last-child {
+    border-bottom: none;
+}
+.shift-item.bookable {
+    background-color: #5cb85c; /* 绿色背景 */
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+.shift-item.bookable:hover {
+    background-color: #4cae4c;
+}
+
+/* ----------------------------------- */
+/* 医生详情页特定样式 */
+/* ----------------------------------- */
+
+.doctor-detail-page {
+    /* 页面内容居中，宽度和主页保持一致 */
+}
+
+.main-body-center {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+/* 1. 顶部背景和医生卡片 */
+.doctor-header-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.header-background {
+    height: 180px; /* 背景高度 */
+    background: linear-gradient(to right, #00a0e9, #4a86e8); /* 渐变蓝色，保持风格一致 */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+}
+
+.header-slogan {
+    background-color: #ffc107; /* 模仿图中的黄色背景 */
+    color: #333;
+    padding: 5px 20px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.doctor-card {
+    position: absolute;
+    bottom: -60px; /* 向上偏移，覆盖在背景上 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; /* 假设卡片宽度 */
+    max-width: 900px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    padding: 20px;
+    align-items: center;
+}
+
+.doctor-photo-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 6px;
+    margin-right: 20px;
+    object-fit: cover;
+    border: 3px solid #eee;
+}
+
+.info-main {
+    flex-grow: 1;
+}
+
+.name-title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.doctor-name-large {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+.doctor-title-large {
+    font-size: 16px;
+    color: #00a0e9;
+    margin-right: 15px;
+}
+.follow-btn {
+    background-color: #00a0e9;
+    color: #fff;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.hospital-dept-info {
+    color: #666;
+    font-size: 14px;
+    margin: 5px 0 10px 0;
+}
+
+.stats-row .stat-item {
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 14px;
+    color: #666;
+}
+.stats-row strong.score {
+    color: #ff6600;
+    font-weight: bold;
+}
+.stats-row strong.count {
+    color: #333;
+    font-weight: bold;
+}
+.opened-status {
+    color: #00a0e9;
+    font-weight: bold;
+}
+
+.qr-code-area {
+    text-align: center;
+    padding-left: 20px;
+    border-left: 1px solid #eee;
+}
+.qr-placeholder {
+    width: 80px;
+    height: 80px;
+    background-color: #ccc;
+    margin-bottom: 5px;
+}
+.qr-code-area p {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+}
+
+/* 2. 医生功能导航 Tabs */
+.doctor-tabs-nav {
+    margin-top: 80px; /* 留出空间给浮动的卡片 */
+    background-color: #f7f7f7;
+    border-bottom: 2px solid #00a0e9;
+    padding: 0 10%; /* 与卡片对齐 */
+}
+.tab-list {
+    display: flex;
+}
+.tab-item {
+    display: block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.2s;
+}
+.tab-item.active {
+    background-color: #00a0e9;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* 3. 主体内容区域 */
+.doctor-content-body {
+    padding: 20px 10%;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.module-title {
+    font-size: 20px;
+    border-left: 4px solid #00a0e9;
+    padding-left: 10px;
+    margin: 30px 0 15px 0;
+    color: #333;
+}
+.module-title small {
+    font-size: 14px;
+    color: #999;
+    font-weight: normal;
+}
+
+.module-sub-nav {
+    float: right;
+    margin-top: -35px;
+}
+.sub-nav-item {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+}
+.sub-nav-item.active {
+    border-color: #00a0e9;
+    color: #00a0e9;
+    font-weight: bold;
+}
+
+
+/* 医生排班表格 */
+.doctor-schedule-table {
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+.schedule-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid #eee;
+}
+.schedule-row:last-child {
+    border-bottom: none;
+}
+.schedule-header-row {
+    background-color: #f7f7f7;
+    font-weight: bold;
+    color: #333;
+}
+.col-fixed {
+    width: 15%; /* 执业点列 */
+    padding: 10px;
+    border-right: 1px solid #eee;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.col-days-wrapper {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden; /* 隐藏右侧可能溢出的内容 */
+}
+
+/* 日期头部样式 */
+.day-header {
+    width: calc(85% / 7); /* 7天平均分配 */
+    text-align: center;
+    padding: 10px 0;
+    border-right: 1px solid #eee;
+    line-height: 1.3;
+    font-size: 14px;
+}
+.day-header.active {
+    color: #00a0e9;
+}
+.nav-arrow-right {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00a0e9;
+    cursor: pointer;
+}
+
+/* 执业点信息行 */
+.shift-row {
+    align-items: flex-start;
+}
+.shift-time {
+    /* 调整时间标签的显示 */
+    padding: 15px 10px;
+    height: auto;
+}
+.time-label {
+    display: block;
+    line-height: 1.8;
+    color: #666;
+}
+
+.hospital-info {
+    width: 15%; /* 医院信息占排班表左侧的固定宽度 */
+    padding: 15px;
+    border-right: 1px solid #eee;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+.hospital-name-link {
+    color: #00a0e9;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+.dept-name-link {
+    display: block;
+    color: #999;
+}
+
+.shift-details {
+    display: flex;
+    flex-wrap: wrap; /* 允许换行 */
+    width: 100%;
+    margin-top: 10px;
+}
+.shift-cell {
+    width: calc(100% / 7); /* 7天平均分配 */
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid #eee;
+    box-sizing: border-box;
+    font-size: 12px;
+    color: #999;
+    margin-top: -1px;
+    margin-left: -1px;
+}
+.shift-cell.afternoon {
+    background-color: #5cb85c; /* 绿色可约 */
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.more-booking-info {
+    width: 20%; /* 留给右侧额外信息 */
+    padding: 10px;
+    font-size: 12px;
+    color: #ff6600;
+    text-align: center;
+}

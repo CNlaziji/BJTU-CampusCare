@@ -63,7 +63,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { loginUser } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
@@ -73,7 +72,6 @@ import main2 from '@/assets/banners/main2.jpg'
 import main3 from '@/assets/banners/main3.jpg'
 import main4 from '@/assets/banners/main4.jpg'
 
-const router = useRouter()
 const loginForm = ref({
   username: '',
   password: '',
@@ -107,7 +105,8 @@ const handleLogin = async () => {
         localStorage.setItem('token', response.data.token)
         localStorage.setItem('user', JSON.stringify(response.data.user))
         ElMessage.success('登录成功')
-        router.push('/')
+        // 登录成功后跳转到前端集成的患者主界面（public/patient/index.html）
+        window.location.href = '/patient/index.html'
       } catch (error) {
         ElMessage.error(error.message || '登录失败，请稍后再试')
         console.error(error)

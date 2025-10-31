@@ -1,0 +1,2642 @@
+<!DOCTYPE html> 
+<html lang="zh-CN"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>健康160 - 专业医疗预约挂号平台</title> 
+    <style>
+        /* 通用重置 */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* 略微灰色背景 */
+            color: #333;
+            font-size: 14px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* 页面容器 */
+        .page-container {
+            width: 98%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 通用悬停动画效果 */
+        .hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* 过渡动画 */
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        /* 1. 顶部区域样式 */
+        .top-bar-container {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .top-bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Logo 和 城市选择 */
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00a0e9; /* 蓝色 */
+            margin-right: 10px;
+        }
+        .slogan-text {
+            font-size: 10px;
+            color: #666;
+            border-left: 1px solid #ccc;
+            padding-left: 10px;
+            margin-right: 20px;
+        }
+        .city-select {
+            color: #333;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .city-select::before {
+            content: "📍"; /* 模仿位置图标 */
+            margin-right: 5px;
+        }
+        .city-select [更换] {
+            color: #00a0e9;
+            margin-left: 5px;
+        }
+        
+        /* 搜索区域 */
+        .search-area {
+            display: flex;
+            border: 2px solid #00a0e9; /* 蓝色边框 */
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+        }
+        .search-input {
+            padding: 8px 10px;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-button {
+            background-color: #00a0e9; /* 蓝色背景 */
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* 2. 主导航栏样式 */
+        .main-nav-container {
+            background-color: #0072c6; /* 深蓝色背景，更接近健康160的样式 */
+            height: 42px;
+        }
+        
+        .main-nav-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .main-nav-list li a {
+            color: #fff;
+            padding: 0 20px;
+            line-height: 42px;
+            font-size: 16px;
+            display: block;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .main-nav-list li a:hover,
+        .main-nav-list li a.active {
+            background-color: #005ba1; /* 鼠标悬停或选中时的深色背景 */
+        }
+        
+        /* 页面区域基础样式 */
+        .page-section {
+            display: none;
+            margin: 30px 0;
+            padding: 0;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+        
+        /* 3. 首页内容区域布局 */
+        .home-content-container {
+            display: flex;
+            gap: 25px;
+            padding: 10px 0;
+        }
+        
+        .main-body-left {
+            width: 76%;
+            min-height: 500px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-right {
+            width: 24%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+        
+        /* 右侧边栏/快速挂号区的样式 */
+        .service-stats {
+            padding: 20px;
+            background-color: #fff;
+            font-size: 14px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 100%;
+        }
+        .stats-number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .orange {
+            color: #ff6600; /* 橙色，用于数字 */
+        }
+        
+        .quick-booking-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 100%;
+        }
+        .quick-booking-form h4 {
+            margin-top: 0;
+            font-size: 16px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            color: #00a0e9;
+        }
+        
+        /* 表单输入组 */
+        .booking-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .booking-input-group label {
+            width: 60px;
+            text-align: right;
+            margin-right: 10px;
+            color: #666;
+        }
+        .booking-input-group input,
+        .booking-input-group select {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            appearance: none; /* 移除默认的select样式 */
+            background-color: #fff;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="%23333"><polygon points="0,0 10,0 5,10"/></svg>'); /* 模仿下拉箭头 */
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+        
+        /* 快速预约按钮 */
+        .quick-booking-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff6600; /* 橙色背景 */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .quick-booking-button:hover {
+            background-color: #e55c00;
+        }
+        
+        /* 占位符样式 */
+        .placeholder {
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            color: #ccc;
+            border: 1px dashed #eee;
+            width: 100%;
+        }
+        
+        /* ===== 找科室页面样式 ===== */
+        /* 科室分类导航 */
+        .department-nav {
+            background-color: #fff;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 6px;
+        }
+        
+        .dept-nav-container {
+            width: 100%;
+        }
+        
+        .dept-section {
+            margin-bottom: 20px;
+        }
+        
+        .dept-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .dept-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        
+        .dept-item {
+            padding: 5px 0;
+        }
+        
+        .dept-item a {
+            color: #666;
+            padding: 5px 0;
+            position: relative;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .dept-item a:hover,
+        .dept-item a.active {
+            color: #00a0e9;
+        }
+        
+        .dept-item a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #00a0e9;
+        }
+        
+        /* 找科室页面内容区域 */
+        .dept-content-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .dept-main-content {
+            flex: 1;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            width: calc(100% - 280px - 20px);
+        }
+        
+        .dept-sidebar {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 排序和筛选 */
+        .sort-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-label {
+            color: #666;
+        }
+        
+        .filter-select {
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        
+        /* 科室列表 */
+        .department-list {
+            margin-bottom: 20px;
+        }
+        
+        .dept-card {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .dept-info {
+            flex: 1;
+        }
+        
+        .dept-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .hospital-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .hospital-info strong {
+            color: #00a0e9;
+        }
+        
+        .dept-meta {
+            display: flex;
+            gap: 20px;
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .appointment-count {
+            color: #ff6600;
+            font-weight: bold;
+        }
+        
+        .dept-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .collect-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .collect-btn:hover {
+            border-color: #ff6600;
+            color: #ff6600;
+        }
+        
+        .dept-img {
+            width: 80px;
+            height: 60px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        
+        /* 侧边栏APP推广 */
+        .app-promo {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            width: 100%;
+        }
+        
+        .app-promo h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .app-download-btn {
+            display: block;
+            background-color: #ff6600;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .app-download-btn:hover {
+            background-color: #e55c00;
+        }
+        
+        /* 快速预约按钮 */
+        .quick-booking-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff6600; /* 橙色背景 */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .quick-booking-button:hover {
+            background-color: #e55c00;
+        }
+        
+        /* 一周热门评价 */
+        .hot-reviews {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            width: 100%;
+        }
+        
+        .hot-reviews h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .review-item {
+            margin-bottom: 15px;
+        }
+        
+        .review-dept {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .review-content {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+    
+    <script>
+        // 显示当前时间的函数
+        function updateCurrentTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const timeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // 初始加载时更新时间
+        window.onload = function() {
+            updateCurrentTime();
+            // 每秒更新一次时间
+            setInterval(updateCurrentTime, 1000);
+        };
+    </script>
+    </head> 
+<body> 
+    <header class="top-bar-container"> 
+        <div class="page-container">
+            <div class="top-bar-content"> 
+                <div class="logo-area"> 
+                    <span class="logo-text">BJTU</span> 
+                    <span class="slogan-text">Time is Life 让健康更简单</span> 
+                    <span id="current-time" class="current-time"></span> 
+                </div> 
+                <div class="search-area"> 
+                    <input type="text" placeholder="请输入病症/医生/科室/医院名称" class="search-input"> 
+                    <button class="search-button">搜索</button> 
+                </div> 
+            </div>
+        </div> 
+    </header> 
+
+    <nav class="main-nav-container"> 
+        <div class="page-container">
+            <ul class="main-nav-list"> 
+                <li><a href="#" class="nav-link active" data-target="home">首页</a></li> 
+                <li><a href="#departments" class="nav-link" data-target="departments">找科室</a></li> 
+                <li><a href="#doctors" class="nav-link" data-target="doctors">找医生</a></li> 
+                <li><a href="#guide" class="nav-link" data-target="guide">挂号指南</a></li> 
+            </ul>
+        </div> 
+    </nav> 
+
+    <div class="page-container">
+        <!-- 首页区域 -->
+        <section id="home" class="page-section active"> 
+            <div class="home-content-container"> 
+                <section class="main-body-left"> 
+                    <!-- 医院照片区域 -->
+                    <div style="height: 400px; border-radius: 6px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <img src="医院照片.png" alt="北京交通大学社区卫生服务中心" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    
+                    <!-- 科室推荐 -->
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #333; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid #0072c6; padding-bottom: 8px;">推荐科室</h3>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                            <div class="hover-effect transition-all" onclick="goToDepartment('general')" style="padding: 25px; background-color: #f9f9f9; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 8px;">全科</div>
+                                <div style="font-size: 16px; color: #666;">25位医生 · 658个评价</div>
+                            </div>
+                            <div class="hover-effect transition-all" onclick="goToDepartment('internal')" style="padding: 25px; background-color: #f9f9f9; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 8px;">内科</div>
+                                <div style="font-size: 16px; color: #666;">12位医生 · 1528个评价</div>
+                            </div>
+                            <div class="hover-effect transition-all" onclick="goToDepartment('surgery')" style="padding: 25px; background-color: #f9f9f9; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 8px;">外科</div>
+                                <div style="font-size: 16px; color: #666;">8位医生 · 986个评价</div>
+                            </div>
+                            <div class="hover-effect transition-all" onclick="goToDepartment('dental')" style="padding: 25px; background-color: #f9f9f9; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 8px;">口腔科</div>
+                                <div style="font-size: 16px; color: #666;">12位医生 · 452个评价</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门医生 -->
+                    <div>
+                        <h3 style="color: #333; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid #0072c6; padding-bottom: 8px;">热门医生</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="hover-effect transition-all" style="display: flex; padding: 25px; background-color: #fff; border-radius: 6px; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;">
+                                <img src="https://picsum.photos/id/22/100/100" style="width: 100px; height: 100px; border-radius: 50%; margin-right: 30px; object-fit: cover;" alt="王医生">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 10px;">王医生 - 主任医师</div>
+                                    <div style="font-size: 18px; color: #666; margin-bottom: 8px;">内科 · 擅长：心血管疾病、高血压</div>
+                                    <div style="font-size: 16px; color: #999;">好评率 98% · 已接诊 3256 人次</div>
+                                </div>
+                                <button style="padding: 12px 25px; background-color: #0072c6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px;">预约</button>
+                            </div>
+                            <div class="hover-effect transition-all" style="display: flex; padding: 25px; background-color: #fff; border-radius: 6px; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;">
+                                <img src="https://picsum.photos/id/23/100/100" style="width: 100px; height: 100px; border-radius: 50%; margin-right: 30px; object-fit: cover;" alt="李医生">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 10px;">李医生 - 副主任医师</div>
+                                    <div style="font-size: 18px; color: #666; margin-bottom: 8px;">全科 · 擅长：常见病诊治、健康咨询</div>
+                                    <div style="font-size: 16px; color: #999;">好评率 96% · 已接诊 2873 人次</div>
+                                </div>
+                                <button style="padding: 12px 25px; background-color: #0072c6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px;">预约</button>
+                            </div>
+                            <div class="hover-effect transition-all" style="display: flex; padding: 25px; background-color: #fff; border-radius: 6px; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;">
+                                <img src="https://picsum.photos/id/24/100/100" style="width: 100px; height: 100px; border-radius: 50%; margin-right: 30px; object-fit: cover;" alt="张医生">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 10px;">张医生 - 主治医师</div>
+                                    <div style="font-size: 18px; color: #666; margin-bottom: 8px;">外科 · 擅长：普外科手术、伤口处理</div>
+                                    <div style="font-size: 16px; color: #999;">好评率 99% · 已接诊 2134 人次</div>
+                                </div>
+                                <button style="padding: 12px 25px; background-color: #0072c6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px;">预约</button>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+
+                <aside class="sidebar-right"> 
+                    <div class="service-stats"> 
+                        <p>累计服务人次 <span class="stats-number orange">814,25</span></p> 
+                        <p>可服务医生数 <span class="stats-number orange">659</span></p> 
+                    </div> 
+
+                    <div class="quick-booking-form"> 
+                        <h4>快速挂号</h4> 
+                        <div class="booking-input-group"> 
+                            <label>科室：</label> 
+                            <select id="departmentSelect"><option value="">选择科室</option><option value="internal">内科</option><option value="surgery">外科</option><option value="general">全科</option><option value="dental">口腔科</option><option value="eye">眼科</option><option value="dermatology">皮肤科</option><option value="ent">耳鼻喉科</option><option value="psychology">心理咨询中心</option><option value="rehab">康复理疗科</option></select> 
+                        </div> 
+                        <div class="booking-input-group"> 
+                            <label>日期：</label> 
+                            <select id="dateSelect"><option value="">选择日期</option></select> 
+                        </div> 
+                        <div class="booking-input-group"> 
+                            <label>时段：</label> 
+                            <select id="timeSelect"><option value="">选择时段</option><option>9:00-10:00</option><option>10:00-11:00</option><option>11:00-12:00</option><option>14:00-15:00</option><option>15:00-16:00</option><option>16:00-17:00</option></select> 
+                        </div> 
+                        <div class="booking-input-group"> 
+                            <label>医生：</label> 
+                            <select id="doctorSelect"><option value="">选择医生</option></select> 
+                        </div>
+
+                        <button class="quick-booking-button">立即预约挂号</button>
+                        
+                        <script>
+                        // 科室医生映射数据
+                        const departmentDoctors = {
+                            internal: [
+                                { id: 'doc1', name: '张医生 - 主任医师' },
+                                { id: 'doc2', name: '王医生 - 副主任医师' },
+                                { id: 'doc3', name: '李医生 - 主治医师' }
+                            ],
+                            surgery: [
+                                { id: 'doc4', name: '赵医生 - 主任医师' },
+                                { id: 'doc5', name: '钱医生 - 副主任医师' }
+                            ],
+                            general: [
+                                { id: 'doc6', name: '孙医生 - 主治医师' },
+                                { id: 'doc7', name: '周医生 - 住院医师' }
+                            ],
+                            dental: [
+                                { id: 'doc8', name: '吴医生 - 主任医师' },
+                                { id: 'doc9', name: '郑医生 - 副主任医师' }
+                            ],
+                            eye: [
+                                { id: 'doc10', name: '陈医生 - 主任医师' },
+                                { id: 'doc11', name: '杨医生 - 主治医师' }
+                            ],
+                            dermatology: [
+                                { id: 'doc12', name: '黄医生 - 副主任医师' },
+                                { id: 'doc13', name: '刘医生 - 主治医师' }
+                            ],
+                            ent: [
+                                { id: 'doc14', name: '胡医生 - 主任医师' },
+                                { id: 'doc15', name: '林医生 - 主治医师' }
+                            ],
+                            psychology: [
+                                { id: 'doc16', name: '何医生 - 副主任医师' },
+                                { id: 'doc17', name: '高医生 - 主治医师' }
+                            ],
+                            rehab: [
+                                { id: 'doc18', name: '罗医生 - 副主任医师' },
+                                { id: 'doc19', name: '梁医生 - 主治医师' }
+                            ]
+                        };
+                        
+                        // 获取元素
+                        const departmentSelect = document.getElementById('departmentSelect');
+                        const doctorSelect = document.getElementById('doctorSelect');
+                        
+                        // 监听科室选择变化
+                        departmentSelect.addEventListener('change', function() {
+                            const selectedDept = this.value;
+                            
+                            // 清空医生选择框
+                            doctorSelect.innerHTML = '<option value="">选择医生</option>';
+                            
+                            // 如果选择了科室
+                            if (selectedDept && departmentDoctors[selectedDept]) {
+                                // 添加对应科室的医生
+                                departmentDoctors[selectedDept].forEach(doctor => {
+                                    const option = document.createElement('option');
+                                    option.value = doctor.id;
+                                    option.textContent = doctor.name;
+                                    doctorSelect.appendChild(option);
+                                });
+                            }
+                        });
+                        
+                        // 初始化日期选择框 - 生成未来7天的日期
+                        const dateSelect = document.getElementById('dateSelect');
+                        const today = new Date();
+                        
+                        for (let i = 0; i < 7; i++) {
+                            const date = new Date(today);
+                            date.setDate(today.getDate() + i);
+                            
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const weekday = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.getDay()];
+                            
+                            const dateStr = `${year}-${month}-${day} ${weekday}`;
+                            const option = document.createElement('option');
+                            option.value = `${year}-${month}-${day}`;
+                            option.textContent = dateStr;
+                            
+                            dateSelect.appendChild(option);
+                        }
+                        
+                        // 为所有预约按钮添加点击事件，跳转到医生详情页
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // 为所有包含"预约"文本的按钮添加点击事件
+                            const appointmentButtons = document.querySelectorAll('button');
+                            appointmentButtons.forEach(button => {
+                                if (button.textContent.trim() === '预约') {
+                                    button.addEventListener('click', function() {
+                                        // 获取医生信息（从卡片中提取或使用data属性）
+                                        let doctorName = '';
+                                        let doctorCard = this.closest('.doctor-card');
+                                        
+                                        if (doctorCard) {
+                                            // 尝试从卡片中获取医生姓名
+                                            const nameElement = doctorCard.querySelector('h3, .doctor-name');
+                                            if (nameElement) {
+                                                doctorName = nameElement.textContent.trim();
+                                            }
+                                        }
+                                        
+                                        // 跳转到医生详情页，携带医生名称参数
+                                        if (doctorName) {
+                                            window.location.href = `doctor.html?doctor=${encodeURIComponent(doctorName)}`;
+                                        } else {
+                                            // 如果无法获取医生名称，仍然跳转到医生详情页
+                                            window.location.href = 'doctor.html';
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        </script> 
+                    </div> 
+                </aside> 
+            </div> 
+        </section>
+
+        <!-- 找科室页面 -->
+        <section id="departments" class="page-section">
+            <!-- 科室分类导航 -->
+            <div class="department-nav">
+                <div class="dept-nav-container">
+                    <div class="dept-section">
+                        <div class="dept-title">科室分类：</div>
+                        <ul class="dept-list">
+                            <li class="dept-item"><a href="#" class="active dept-link" data-dept="all">全部分类</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="general">全科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="internal">内科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="surgery">外科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="dental">口腔科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="eye">眼科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="ent">耳鼻喉科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="dermatology">皮肤科</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="dept-section">
+                        <div class="dept-title">支持科室：</div>
+                        <ul class="dept-list">
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="rehab">康复理疗科</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="psychology">心理咨询中心</a></li>
+                            <li class="dept-item"><a href="#" class="dept-link" data-dept="lab">检验科</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dept-content-container" style="display: flex;">
+                <!-- 主要内容区 - 只保留这部分，移除侧边栏 -->
+                <main class="dept-main-content" style="flex: 1;">
+                    <div class="sort-filter">
+                        <div class="filter-options">
+                            <span class="filter-label">已开启挂号</span>
+                            <span class="filter-label">排序：</span>
+                            <select class="filter-select">
+                                <option>按预约人次排序</option>
+                                <option>按好评度排序</option>
+                                <option>按距离排序</option>
+                            </select>
+                        </div>
+                        <div class="result-count">共25位医生 / 1/1</div>
+                    </div>
+                    
+                    <!-- 医生列表容器 -->
+                    <div class="doctor-list-container">
+                        <!-- 全部分类医生列表 -->
+                        <div id="all-doctors" class="doctor-list active">
+                            <!-- 全科医生 -->
+                            <div class="doctor-card dept-general" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/1/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="王医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">王医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">全科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：常见病诊治、慢性病管理、健康咨询</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.5分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">3256</span></div>
+                                            <div style="color: #999; font-size: 16px;">256人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-general" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/2/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="陈医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">陈医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">全科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：健康教育、预防保健、常见病诊疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1542</span></div>
+                                            <div style="color: #999; font-size: 16px;">134人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 内科医生 -->
+                            <div class="doctor-card dept-internal" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/3/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="李医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 class="doctor-name" style="margin: 0 0 8px 0; font-size: 22px; color: #333;">李医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">内科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：心血管疾病、呼吸系统疾病、消化系统疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.3分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2873</span></div>
+                                            <div style="color: #999; font-size: 16px;">189人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-internal" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/4/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="赵医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">赵医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">内科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：内分泌疾病、代谢性疾病、老年病诊疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.0分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1456</span></div>
+                                            <div style="color: #999; font-size: 16px;">112人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-internal" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/5/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="孙医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">孙医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">内科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：肾脏疾病、高血压、糖尿病并发症</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.4分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2154</span></div>
+                                            <div style="color: #999; font-size: 16px;">168人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 外科医生 -->
+                            <div class="doctor-card dept-surgery" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/6/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="张医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">张医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">外科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：普外科手术、创伤处理、皮肤软组织感染</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1234</span></div>
+                                            <div style="color: #999; font-size: 16px;">156人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-surgery" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/7/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="周医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">周医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">外科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：骨科手术、关节疾病、运动损伤</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1867</span></div>
+                                            <div style="color: #999; font-size: 16px;">142人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-surgery" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/8/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="吴医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">吴医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">外科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：创伤急救、烧烫伤治疗、普外科常见疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.0分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">987</span></div>
+                                            <div style="color: #999; font-size: 16px;">98人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 口腔科医生 -->
+                            <div class="doctor-card dept-dental" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/9/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="刘医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">刘医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">口腔科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：龋齿修复、根管治疗、口腔正畸</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.4分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1876</span></div>
+                                            <div style="color: #999; font-size: 16px;">124人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card dept-dental" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/10/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="郑医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">郑医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">口腔科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：口腔修复、义齿制作、牙周疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1245</span></div>
+                                            <div style="color: #999; font-size: 16px;">98人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 全科医生列表 -->
+                        <div id="general-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/11/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="王医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">王医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">全科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：常见病诊治、慢性病管理、健康咨询</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.5分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">3256</span></div>
+                                            <div style="color: #999; font-size: 16px;">256人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/12/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="陈医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">陈医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">全科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：健康教育、预防保健、常见病诊疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1542</span></div>
+                                            <div style="color: #999; font-size: 16px;">134人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 内科医生列表 -->
+                        <div id="internal-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/13/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="李医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">李医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">内科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：心血管疾病、呼吸系统疾病、消化系统疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.3分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2873</span></div>
+                                            <div style="color: #999; font-size: 16px;">189人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/14/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="赵医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">赵医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">内科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：内分泌疾病、代谢性疾病、老年病诊疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.0分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1456</span></div>
+                                            <div style="color: #999; font-size: 16px;">112人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 外科医生列表 -->
+                        <div id="surgery-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/15/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="张医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">张医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">外科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：普外科手术、创伤处理、皮肤软组织感染</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1234</span></div>
+                                            <div style="color: #999; font-size: 16px;">156人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/16/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="王医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">王医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">外科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：骨科疾病、关节镜手术、运动损伤修复</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.3分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1987</span></div>
+                                            <div style="color: #999; font-size: 16px;">143人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 口腔科医生列表 -->
+                        <div id="dental-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/17/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="刘医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">刘医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">口腔科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：龋齿修复、根管治疗、口腔正畸</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.4分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1876</span></div>
+                                            <div style="color: #999; font-size: 16px;">124人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/18/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="郑医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">郑医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">口腔科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：口腔修复、义齿制作、牙周疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1245</span></div>
+                                            <div style="color: #999; font-size: 16px;">98人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 眼科医生列表 -->
+                        <div id="eye-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/19/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="林医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">林医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">眼科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：白内障、青光眼、视网膜疾病</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.6分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2456</span></div>
+                                            <div style="color: #999; font-size: 16px;">189人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/20/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="黄医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">黄医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">眼科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：近视、弱视、斜视治疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.3分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1567</span></div>
+                                            <div style="color: #999; font-size: 16px;">112人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 耳鼻喉科医生列表 -->
+                        <div id="ent-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/21/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="马医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">马医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">耳鼻喉科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：中耳炎、鼻窦炎、咽喉炎</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1345</span></div>
+                                            <div style="color: #999; font-size: 16px;">98人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/25/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="牛医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">牛医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">耳鼻喉科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：耳鸣、听力障碍、过敏性鼻炎</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">987</span></div>
+                                            <div style="color: #999; font-size: 16px;">76人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 皮肤科医生列表 -->
+                        <div id="dermatology-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/26/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="秦医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">秦医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">皮肤科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：湿疹、皮炎、痤疮治疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.4分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1765</span></div>
+                                            <div style="color: #999; font-size: 16px;">143人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/27/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="尤医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">尤医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">皮肤科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：荨麻疹、银屑病、皮肤过敏</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1123</span></div>
+                                            <div style="color: #999; font-size: 16px;">89人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 康复理疗科医生列表 -->
+                        <div id="rehab-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/28/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="钱医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">钱医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">副主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">康复理疗科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：运动损伤康复、物理治疗、推拿按摩</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.3分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1456</span></div>
+                                            <div style="color: #999; font-size: 16px;">103人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="https://picsum.photos/id/29/100/130" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;" alt="孙医生">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">孙医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">康复理疗科</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：颈肩腰腿痛、中医推拿、针灸治疗</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.1分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1023</span></div>
+                                            <div style="color: #999; font-size: 16px;">87人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 心理咨询中心医生列表 -->
+                        <div id="psychology-doctors" class="doctor-list" style="display: none;">
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='130' viewBox='0 0 100 130'%3E%3Crect width='100' height='130' fill='%23f0f0f0'/%3E%3Ctext x='50' y='65' font-size: 16' text-anchor='middle' fill='%23999'%3E孙医生%3C/text%3E%3C/svg%3E" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">孙医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">心理咨询中心</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：抑郁症、焦虑症、压力管理</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.5分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2134</span></div>
+                                            <div style="color: #999; font-size: 16px;">156人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-card" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='130' viewBox='0 0 100 130'%3E%3Crect width='100' height='130' fill='%23f0f0f0'/%3E%3Ctext x='50' y='65' font-size: 16' text-anchor='middle' fill='%23999'%3E李医生%3C/text%3E%3C/svg%3E" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">李医生</h3>
+                                            <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主治医师</div>
+                                            <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                            <div style="color: #999; font-size: 16px; margin-bottom: 10px;">心理咨询中心</div>
+                                            <div style="color: #666; font-size: 16px;">擅长：青少年心理问题、人际关系、自我成长</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.2分</div>
+                                            <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                            <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1345</span></div>
+                                            <div style="color: #999; font-size: 16px;">123人点评</div>
+                                            <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px;">预约</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            
+            <script>
+                // 科室切换功能 - 在当前页面筛选医生
+                document.querySelectorAll('.dept-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // 移除所有链接的active类
+                        document.querySelectorAll('.dept-link').forEach(l => l.classList.remove('active'));
+                        // 为当前点击的链接添加active类
+                        this.classList.add('active');
+                        
+                        // 获取科室标识
+                        const dept = this.getAttribute('data-dept');
+                        console.log('选择科室:', dept);
+                        
+                        // 科室ID到科室名称的映射表
+                        const deptMap = {
+                            'general': '全科',
+                            'internal': '内科',
+                            'surgery': '外科',
+                            'dental': '口腔科',
+                            'eye': '眼科',
+                            'ent': '耳鼻喉科',
+                            'dermatology': '皮肤科',
+                            'rehab': '康复理疗科',
+                            'psychology': '心理咨询中心',
+                            'lab': '检验科'
+                        };
+                        
+                        // 确保所有独立的医生列表容器可见
+                        document.querySelectorAll('.doctor-list').forEach(list => {
+                            list.style.display = 'block';
+                        });
+                        
+                        // 在当前页面筛选医生
+                        const allDoctors = document.querySelectorAll('.doctor-card');
+                        let visibleCount = 0;
+                        
+                        allDoctors.forEach(card => {
+                            if (dept === 'all') {
+                                // 显示所有医生
+                                card.style.display = 'flex';
+                                visibleCount++;
+                            } else {
+                                // 检查多种匹配方式
+                                const cardDeptClass = `dept-${dept}`;
+                                const deptName = deptMap[dept] || '';
+                                
+                                // 方式1: 检查医生卡片是否包含对应的科室类名
+                                const hasClassMatch = card.classList.contains(cardDeptClass);
+                                
+                                // 方式2: 检查医生卡片中的科室文本内容
+                                const hasTextMatch = Array.from(card.querySelectorAll('div')).some(div => {
+                                    const text = div.textContent.trim();
+                                    return text === deptName || text.includes(deptName);
+                                });
+                                
+                                // 任一匹配成功就显示该医生卡片
+                                if (hasClassMatch || hasTextMatch) {
+                                    card.style.display = 'flex';
+                                    visibleCount++;
+                                } else {
+                                    card.style.display = 'none';
+                                }
+                            }
+                        });
+                        
+                        // 更新结果计数
+                        const resultCount = document.querySelector('.result-count');
+                        if (resultCount) {
+                            resultCount.textContent = `共${visibleCount}位医生 / 1/1`;
+                        }
+                        
+                        console.log(`筛选后显示${visibleCount}位医生`);
+                    });
+                });
+                
+                // 确保页面加载时显示所有医生
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (document.getElementById('departments').classList.contains('active')) {
+                        const allDoctors = document.querySelectorAll('.doctor-card');
+                        const resultCount = document.querySelector('.result-count');
+                        if (resultCount) {
+                            resultCount.textContent = `共${allDoctors.length}位医生 / 1/1`;
+                        }
+                    }
+                });
+            </script>
+            </div>
+        </section>
+
+        <!-- 找医生页面 -->
+        <section id="doctors" class="page-section">
+            <div style="background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                <!-- 筛选条件区域 -->
+                <div style="padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 20px;">
+                    <div id="selectedFilters" style="display: flex; align-items: center; gap: 15px;">
+                        <span style="color: #666; font-size: 16px;">已选条件：</span>
+                        <span style="background-color: #e6f3fa; color: #00a0e9; padding: 5px 12px; border-radius: 4px; display: inline-flex; align-items: center; font-size: 16px;">
+                                全部科室
+                                <span style="margin-left: 8px; cursor: pointer; font-size: 18px;">×</span>
+                            </span>
+                    </div>
+                </div>
+                
+                <!-- 筛选导航 -->
+                <div style="padding: 20px;">
+                    <!-- 科室筛选 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 18px; color: #666; margin-bottom: 12px;">科室：</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                            <span class="dept-filter" data-dept="all" style="padding: 8px 18px; background-color: #00a0e9; color: white; border-radius: 4px; cursor: pointer; font-size: 16px;">全部</span>
+                            <span class="dept-filter" data-dept="全科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">全科</span>
+                            <span class="dept-filter" data-dept="内科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">内科</span>
+                            <span class="dept-filter" data-dept="外科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">外科</span>
+                            <span class="dept-filter" data-dept="口腔科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">口腔科</span>
+                            <span class="dept-filter" data-dept="眼科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">眼科</span>
+                            <span class="dept-filter" data-dept="耳鼻喉科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">耳鼻喉科</span>
+                            <span class="dept-filter" data-dept="皮肤科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">皮肤科</span>
+                            <span class="dept-filter" data-dept="康复理疗科" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">康复理疗科</span>
+                            <span class="dept-filter" data-dept="心理咨询中心" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">心理咨询中心</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 医生职称筛选 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 18px; color: #666; margin-bottom: 12px;">医生职称：</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                            <span class="title-filter" data-title="all" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">全部职称</span>
+                            <span class="title-filter" data-title="主任医师" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">主任医师</span>
+                            <span class="title-filter" data-title="副主任医师" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">副主任医师</span>
+                            <span class="title-filter" data-title="主治医师" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">主治医师</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 开通服务筛选 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 18px; color: #666; margin-bottom: 12px;">开通服务：</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                            <span class="service-filter" data-service="registration" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">挂号</span>
+                            <span class="service-filter" data-service="consultation" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">咨询</span>
+                            <span class="service-filter" data-service="private" style="padding: 8px 18px; background-color: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 16px;">私人医生</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 20px;">
+                <!-- 医生列表区域 -->
+                <div style="flex: 1;">
+                    <!-- 排序和计数 -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; background-color: #fff; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div>
+                            <select id="sortSelect" style="border: 1px solid #ddd; padding: 8px 15px; border-radius: 4px; background-color: #fff; font-size: 16px;">
+                                <option value="appointment">预约人次 ↑</option>
+                                <option value="rating">好评度 ↑</option>
+                                <option value="score">评分 ↑</option>
+                            </select>
+                        </div>
+                        <div id="doctorCount" style="color: #666; font-size: 16px;">共12,503个医生 / 1/1251</div>
+                    </div>
+                    
+                    <!-- 医生列表 -->
+                    <div id="doctor-list-container" style="min-height: 400px;">
+                        <!-- 全科医生 -->
+                        <div class="doctor-card" data-dept="全科" data-title="主任医师" data-services="registration,consultation,private" data-appointments="2345" data-rating="98" data-score="9.5" style="background-color: #fff; padding: 25px; margin-bottom: 15px; display: flex; gap: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='130' viewBox='0 0 100 130'%3E%3Crect width='100' height='130' fill='%23f0f0f0'/%3E%3Ctext x='50' y='65' font-size='16' text-anchor='middle' fill='%23999'%3E李医生%3C/text%3E%3C/svg%3E" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 8px 0; font-size: 22px; color: #333;">李医生</h3>
+                                        <div style="color: #00a0e9; font-size: 18px; margin-bottom: 8px;">主任医师</div>
+                                        <div style="color: #666; font-size: 18px; margin-bottom: 10px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 16px; margin-bottom: 10px;">全科</div>
+                                        <div style="color: #666; font-size: 16px;">擅长：常见病诊治、慢性病管理、健康咨询</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 24px; font-weight: bold; margin-bottom: 8px;">9.5分</div>
+                                        <div style="color: #ff9900; margin-bottom: 10px; font-size: 16px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 16px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2345</span></div>
+                                        <div style="color: #999; font-size: 16px;">187人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                                    <button style="padding: 8px 20px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 全科医生 -->
+                        <div class="doctor-card" data-dept="全科" data-title="主任医师" data-services="registration,consultation" data-appointments="2567" data-rating="98" data-score="9.6" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E王医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">王医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">全科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：全科医疗、疑难杂症、老年医学</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.6分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2567</span></div>
+                                        <div style="color: #999; font-size: 13px;">212人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" data-dept="全科" data-title="主治医师" data-services="registration,consultation" data-appointments="1876" data-rating="96" data-score="9.2" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E陈医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">陈医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主治医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">全科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：健康教育、预防保健、慢病筛查</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.2分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1876</span></div>
+                                        <div style="color: #999; font-size: 13px;">145人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" data-dept="全科" data-title="副主任医师" data-services="registration,consultation" data-appointments="2034" data-rating="97" data-score="9.4" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E林医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">林医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">副主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">全科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：常见病诊疗、健康管理、社区医疗</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.4分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2034</span></div>
+                                        <div style="color: #999; font-size: 13px;">167人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 内科医生 -->
+                        <div class="doctor-card" data-dept="内科" data-title="主任医师" data-services="registration,consultation" data-appointments="2134" data-rating="97" data-score="9.4" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E李医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">李医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">内科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：心血管疾病、高血压、冠心病诊疗</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.4分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2134</span></div>
+                                        <div style="color: #999; font-size: 13px;">178人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="doctor-card" data-dept="内科" data-title="主治医师" data-services="registration,consultation" data-appointments="1987" data-rating="95" data-score="9.3" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E赵医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">赵医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主治医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">内科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：内分泌疾病、糖尿病、甲状腺疾病</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.3分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1987</span></div>
+                                        <div style="color: #999; font-size: 13px;">156人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" data-dept="内科" data-title="副主任医师" data-services="registration,consultation" data-appointments="2256" data-rating="96" data-score="9.5" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E孙医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">孙医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">副主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">内科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：呼吸系统疾病、肺炎、慢性阻塞性肺疾病</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.5分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2256</span></div>
+                                        <div style="color: #999; font-size: 13px;">189人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 外科医生 -->
+                        <div class="doctor-card" data-dept="外科" data-title="主治医师" data-services="registration,consultation" data-appointments="1654" data-rating="94" data-score="9.2" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E张医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">张医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主治医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">外科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：普外科手术、腹部外科、急诊外科</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.2分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">1654</span></div>
+                                        <div style="color: #999; font-size: 13px;">123人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" data-dept="外科" data-title="主任医师" data-services="registration,consultation" data-appointments="3124" data-rating="98" data-score="9.7" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E周医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">周医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">外科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：骨科手术、骨折、关节置换</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.7分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">3124</span></div>
+                                        <div style="color: #999; font-size: 13px;">215人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" data-dept="外科" data-title="副主任医师" data-services="registration,consultation" data-appointments="2456" data-rating="95" data-score="9.4" style="background-color: #fff; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100' viewBox='0 0 80 100'%3E%3Crect width='80' height='100' fill='%23f0f0f0'/%3E%3Ctext x='40' y='50' font-size='12' text-anchor='middle' fill='%23999'%3E刘医生%3C/text%3E%3C/svg%3E" style="width: 80px; height: 100px; object-fit: cover; border-radius: 3px;">
+                            
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">刘医生</h3>
+                                        <div style="color: #00a0e9; font-size: 14px; margin-bottom: 5px;">副主任医师</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">北京交通大学校医院</div>
+                                        <div style="color: #999; font-size: 13px; margin-bottom: 8px;">外科</div>
+                                        <div style="color: #666; font-size: 13px;">擅长：肿瘤外科、腹腔镜手术、微创手术</div>
+                                    </div>
+                                    
+                                    <div style="text-align: right;">
+                                        <div style="color: #ff6600; font-size: 18px; font-weight: bold; margin-bottom: 5px;">9.4分</div>
+                                        <div style="color: #ff9900; margin-bottom: 8px;">★★★★★</div>
+                                        <div style="color: #666; font-size: 14px; margin-bottom: 20px;">已预约人次 <span style="color: #ff6600;">2456</span></div>
+                                        <div style="color: #999; font-size: 13px;">178人点评</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                    <button style="padding: 4px 12px; background-color: #00a0e9; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;">预约</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 侧边栏 -->
+                    <div style="width: 320px;">
+                    <!-- 免费咨询卡片 -->
+                    <div style="background-color: #fff; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='120' viewBox='0 0 300 120'%3E%3Crect width='300' height='120' fill='%23f9f9f9'/%3E%3Ctext x='150' y='60' font-size='24' text-anchor='middle' fill='%23333' font-weight='bold'%3E免费咨询%3C/text%3E%3Ctext x='150' y='90' font-size='14' text-anchor='middle' fill='%23666'%3E平台为您推荐合适的医生%3C/text%3E%3C/svg%3E" style="width: 100%; margin-bottom: 10px;">
+                        <button style="width: 100%; padding: 12px; background-color: #ff6600; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 18px;">咨询医生</button>
+                    </div>
+                    
+                    <!-- 一周点评热门 -->
+                    <div style="background-color: #fff; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 15px;">一周点评热门</h3>
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: bold; margin-bottom: 8px; font-size: 18px;">全科 - 医生</div>
+                            <div style="color: #666; font-size: 16px; line-height: 1.6;">医生态度很好，讲解详细，孩子很配合，很满意的一次就诊体验。</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">内科 - 医生</div>
+                            <div style="color: #666; font-size: 13px; line-height: 1.6;">医生专业度高，检查细致，给出的建议很实用，值得推荐。</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; margin-bottom: 5px;">心理咨询中心 - 医生</div>
+                            <div style="color: #666; font-size: 13px; line-height: 1.6;">医生耐心解答问题，处方合理，价格也很实惠，服务态度很好。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 挂号指南页面 -->
+        <section id="guide" class="page-section">
+            <div style="background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 30px;">
+                <h2 style="margin-top: 0; color: #333; padding-bottom: 20px; border-bottom: 1px solid #eee; font-size: 28px;">挂号指南</h2>
+                
+                <div style="margin-bottom: 40px;">
+                    <h3 style="color: #00a0e9; margin-bottom: 20px; font-size: 24px;">1. 如何选择合适的科室和医生？</h3>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 根据您的症状初步判断就诊科室，如不确定可在首页进行症状咨询</p>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 选择科室后，可查看医生擅长领域、评分和患者评价</p>
+                    <p style="line-height: 1.8; color: #666; font-size: 18px;">- 可根据预约人次、评分等条件筛选排序</p>
+                </div>
+                
+                <div style="margin-bottom: 40px;">
+                    <h3 style="color: #00a0e9; margin-bottom: 20px; font-size: 24px;">2. 挂号流程说明</h3>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 选择科室、日期和时间段</p>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 确认医生信息和挂号费用</p>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 填写就诊人信息和联系方式</p>
+                    <p style="line-height: 1.8; color: #666; font-size: 18px;">- 完成支付后获取挂号成功通知</p>
+                </div>
+                
+                <div style="margin-bottom: 40px;">
+                    <h3 style="color: #00a0e9; margin-bottom: 20px; font-size: 24px;">3. 就诊须知</h3>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 请提前15-30分钟到达医院，凭预约号取号</p>
+                    <p style="line-height: 1.8; color: #666; margin-bottom: 15px; font-size: 18px;">- 请携带有效身份证件、医保卡等相关证件</p>
+                    <p style="line-height: 1.8; color: #666; font-size: 18px;">- 如需取消预约，请提前24小时操作，避免影响信用记录</p>
+                </div>
+                
+                <div>
+                    <h3 style="color: #00a0e9; margin-bottom: 20px; font-size: 24px;">4. 常见问题</h3>
+                    <div style="margin-bottom: 25px; padding-left: 30px; border-left: 4px solid #eee;">
+                        <div style="font-weight: bold; margin-bottom: 10px; font-size: 18px;">Q: 如何查询我的挂号记录？</div>
+                        <div style="color: #666; line-height: 1.8; font-size: 18px;">A: 登录账号后，在"我的预约"中可查看所有挂号记录和状态。</div>
+                    </div>
+                    <div style="margin-bottom: 25px; padding-left: 30px; border-left: 4px solid #eee;">
+                        <div style="font-weight: bold; margin-bottom: 10px; font-size: 18px;">Q: 忘记带预约凭证怎么办？</div>
+                        <div style="color: #666; line-height: 1.8; font-size: 18px;">A: 可提供预约时使用的手机号码在医院自助机或窗口查询。</div>
+                    </div>
+                    <div style="padding-left: 30px; border-left: 4px solid #eee;">
+                        <div style="font-weight: bold; margin-bottom: 10px; font-size: 18px;">Q: 可以为家人代挂号吗？</div>
+                        <div style="color: #666; line-height: 1.8; font-size: 18px;">A: 可以，需要提前添加就诊人信息，并在挂号时选择对应就诊人。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 页面切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有导航链接和页面区域
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageSections = document.querySelectorAll('.page-section');
+            
+            // 导航点击事件处理
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取目标页面ID
+                    const targetId = this.getAttribute('data-target');
+                    
+                    // 确保有目标ID才进行切换
+                    if (targetId) {
+                        // 更新导航激活状态
+                        navLinks.forEach(item => item.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // 显示对应页面，隐藏其他页面
+                        pageSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.id === targetId) {
+                                section.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 确保页面加载时显示正确的默认页面
+            const defaultPage = document.querySelector('#home');
+            if (defaultPage) {
+                defaultPage.classList.add('active');
+            }
+            
+            // 动态生成未来七天的日期选项
+            const dateSelect = document.getElementById('dateSelect');
+            if (dateSelect) {
+                const today = new Date();
+                
+                // 生成今天到未来6天的日期（共7天）
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    
+                    // 格式化日期显示：月-日 星期
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                    const weekDay = weekDays[date.getDay()];
+                    
+                    // 特殊处理今天和明天
+                    let displayText = '';
+                    if (i === 0) {
+                        displayText = '今天 (' + month + '-' + day + ' ' + weekDay + ')';
+                    } else if (i === 1) {
+                        displayText = '明天 (' + month + '-' + day + ' ' + weekDay + ')';
+                    } else {
+                        displayText = month + '-' + day + ' ' + weekDay;
+                    }
+                    
+                    // 创建并添加选项
+                    const option = document.createElement('option');
+                    option.value = date.toISOString().split('T')[0]; // 存储为YYYY-MM-DD格式
+                    option.textContent = displayText;
+                    dateSelect.appendChild(option);
+                }
+            }
+        });
+    // 科室跳转功能 - 跳转到找医生页面并筛选对应科室
+        function goToDepartment(deptId) {
+            // 切换到找医生页面
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageSections = document.querySelectorAll('.page-section');
+            
+            // 更新导航激活状态
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-target') === 'doctors') {
+                    link.classList.add('active');
+                }
+            });
+            
+            // 显示医生页面，隐藏其他页面
+            pageSections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === 'doctors') {
+                    section.classList.add('active');
+                }
+            });
+            
+            // 科室ID映射 - 将英文ID转换为中文名称
+            const deptIdMapping = {
+                'all': 'all',
+                'general': '全科',
+                'internal': '内科',
+                'surgery': '外科',
+                'dental': '口腔科',
+                'eye': '眼科',
+                'ent': '耳鼻喉科',
+                'dermatology': '皮肤科',
+                'rehab': '康复理疗科',
+                'psychology': '心理咨询中心',
+                'lab': '检验科'
+            };
+            
+            // 获取对应的中文科室名称并trim
+            const chineseDeptName = (deptIdMapping[deptId] || 'all').trim();
+            
+            console.log('科室跳转:', deptId, '->', chineseDeptName);
+            
+            // 直接使用全局的筛选功能逻辑
+            if (window.currentFilters) {
+                // 设置筛选条件
+                window.currentFilters.dept = chineseDeptName;
+                
+                // 获取科室筛选按钮
+                const deptFilters = document.querySelectorAll('.dept-filter');
+                
+                // 重置所有按钮样式
+                deptFilters.forEach(filter => {
+                    filter.style.backgroundColor = '#f5f5f5';
+                    filter.style.color = '#333';
+                });
+                
+                // 激活匹配的按钮
+                deptFilters.forEach(filter => {
+                    if (filter.dataset.dept && filter.dataset.dept.trim() === chineseDeptName) {
+                        filter.style.backgroundColor = '#00a0e9';
+                        filter.style.color = 'white';
+                    }
+                });
+                
+                // 直接调用现有的筛选函数
+                if (typeof applyFilters === 'function') {
+                    applyFilters();
+                }
+                
+                if (typeof updateSelectedFiltersDisplay === 'function') {
+                    updateSelectedFiltersDisplay();
+                }
+            }
+            
+            // 增强的安全回退机制和诊断功能
+            function ensureDoctorsVisible() {
+                const visibleCards = Array.from(document.querySelectorAll('.doctor-card')).filter(card => 
+                    card.style.display !== 'none'
+                );
+                
+                console.log(`筛选后可见医生数量: ${visibleCards.length}, 当前科室筛选: ${window.currentFilters?.dept}`);
+                
+                // 如果没有医生显示，自动回退到全部分类
+                if (visibleCards.length === 0 && window.currentFilters && window.currentFilters.dept !== 'all') {
+                    console.warn(`警告: 当前筛选条件 "${window.currentFilters.dept}" 下没有医生显示，自动回退到全部分类`);
+                    
+                    // 执行诊断
+                    const filterValue = window.currentFilters.dept;
+                    const allCards = document.querySelectorAll('.doctor-card');
+                    console.log(`诊断信息 - 筛选值: "${filterValue}", 总医生数: ${allCards.length}`);
+                    
+                    // 尝试找到匹配的科室
+                    const foundDepartments = new Set();
+                    allCards.forEach(card => {
+                        const dept = card.dataset.dept ? card.dataset.dept.trim() : '无科室';
+                        foundDepartments.add(dept);
+                    });
+                    console.log(`系统中存在的科室:`, Array.from(foundDepartments));
+                    
+                    // 回退到全部分类
+                    window.currentFilters.dept = 'all';
+                    
+                    // 更新按钮样式
+                    const deptFilters = document.querySelectorAll('.dept-filter');
+                    deptFilters.forEach(filter => {
+                        if (filter.textContent.trim() === '全部分类' || filter.dataset.dept === 'all') {
+                            filter.style.backgroundColor = '#00a0e9';
+                            filter.style.color = 'white';
+                            filter.style.backgroundColor = '#00a0e9'; // 重复设置确保生效
+                        } else {
+                            filter.style.backgroundColor = '#f5f5f5';
+                            filter.style.color = '#333';
+                        }
+                    });
+                    
+                    // 应用全部分类筛选
+                    setTimeout(() => {
+                        applyFilters();
+                    }, 50);
+                }
+            }
+            
+            // 定期执行安全检查
+            setTimeout(() => {
+                ensureDoctorsVisible();
+            }, 150);
+            
+            // 增强testDepartmentFilter函数，添加更全面的诊断信息
+            window.testDepartmentFilter = function() {
+                console.log('===== 开始全面科室筛选诊断 =====');
+                
+                // 获取所有医生卡片和筛选按钮
+                const cards = document.querySelectorAll('.doctor-card');
+                const filters = document.querySelectorAll('.dept-filter');
+                const departments = new Set();
+                
+                // 收集所有存在的科室
+                cards.forEach((card, index) => {
+                    if (card.dataset.dept) {
+                        const dept = card.dataset.dept.trim();
+                        departments.add(dept);
+                        console.log(`医生卡片 ${index + 1}: 科室=${dept}, 名称=${card.querySelector('.doctor-name')?.textContent || '未知'}`);
+                    }
+                });
+                
+                console.log('发现的科室:', Array.from(departments));
+                console.log('科室筛选按钮:');
+                filters.forEach(filter => {
+                    console.log(`按钮文本: "${filter.textContent.trim()}", data-dept: "${filter.dataset.dept || '无'}"`);
+                });
+                
+                // 测试每个科室按钮的匹配情况
+                filters.forEach(filter => {
+                    const buttonText = filter.textContent.trim();
+                    if (buttonText !== '全部分类') {
+                        const matchingCards = Array.from(cards).filter(card => 
+                            card.dataset.dept && (card.dataset.dept.trim() === buttonText || 
+                                               card.dataset.dept.trim().includes(buttonText) ||
+                                               buttonText.includes(card.dataset.dept.trim()))
+                        );
+                        console.log(`按钮 "${buttonText}" 应匹配到 ${matchingCards.length} 个医生`);
+                    }
+                });
+                
+                console.log('===== 科室筛选诊断完成 =====');
+            };
+        }
+        
+        // 筛选功能实现
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有筛选元素
+            const deptFilters = document.querySelectorAll('.dept-filter');
+            const titleFilters = document.querySelectorAll('.title-filter');
+            const serviceFilters = document.querySelectorAll('.service-filter');
+            const sortSelect = document.getElementById('sortSelect');
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            const doctorCount = document.getElementById('doctorCount');
+            
+            // 当前筛选状态 - 暴露到全局作用域以便其他函数访问
+            window.currentFilters = {
+                dept: 'all',
+                title: 'all',
+                service: 'all'
+            };
+            
+            let currentSort = 'appointment';
+            
+            // 更新筛选按钮样式
+            function updateFilterButtonStyle(filters, activeFilter) {
+                filters.forEach(filter => {
+                    if (filter.dataset.dept === activeFilter || filter.dataset.title === activeFilter || filter.dataset.service === activeFilter) {
+                        filter.style.backgroundColor = '#00a0e9';
+                        filter.style.color = 'white';
+                    } else {
+                        filter.style.backgroundColor = '#f5f5f5';
+                        filter.style.color = '#333';
+                    }
+                });
+            }
+            
+            // 应用筛选
+            function applyFilters() {
+                let visibleCount = 0;
+                
+                // 打印当前筛选条件用于调试
+                console.log('当前筛选条件:', currentFilters);
+                
+                // 调试：打印所有医生卡片的科室信息
+                console.log('===== 医生卡片科室信息 =====');
+                doctorCards.forEach((card, index) => {
+                    const cardDept = card.dataset.dept ? card.dataset.dept.trim() : '无科室信息';
+                    console.log(`医生 ${index + 1}: ${cardDept}`);
+                });
+                console.log('=========================');
+                
+                doctorCards.forEach(card => {
+                    let showCard = true;
+                    
+                    // 科室筛选 - 使用更健壮的匹配方式
+                    const cardDept = card.dataset.dept ? card.dataset.dept.trim() : '';
+                    const filterDept = currentFilters.dept ? currentFilters.dept.trim() : '';
+                    
+                    if (filterDept !== 'all') {
+                        // 方式1: 直接匹配data-dept属性
+                        const directMatch = cardDept === filterDept;
+                        
+                        // 方式2: 检查卡片文本内容是否包含科室名
+                        const textMatch = card.textContent.includes(filterDept);
+                        
+                        // 方式3: 检查卡片类名
+                        const classMatch = card.classList.contains(`dept-${filterDept}`) || 
+                                          card.classList.contains(`dept-${filterDept.toLowerCase()}`);
+                        
+                        // 任一方式匹配成功就显示该医生卡片
+                        if (!directMatch && !textMatch && !classMatch) {
+                            console.log(`科室匹配失败: 筛选值='${filterDept}', 卡片值='${cardDept}'`);
+                            showCard = false;
+                        } else {
+                            console.log(`科室匹配成功: 筛选值='${filterDept}', 卡片值='${cardDept}'`);
+                        }
+                    }
+                    
+                    // 职称筛选
+                    if (showCard && currentFilters.title !== 'all' && card.dataset.title !== currentFilters.title) {
+                        showCard = false;
+                    }
+                    
+                    // 服务筛选
+                    if (showCard && currentFilters.service !== 'all') {
+                        try {
+                            const services = card.dataset.services ? card.dataset.services.split(',') : [];
+                            if (!services.includes(currentFilters.service)) {
+                                showCard = false;
+                            }
+                        } catch (e) {
+                            console.error('服务筛选出错:', e);
+                        }
+                    }
+                    
+                    // 强制设置为flex确保可见性，添加重要日志
+                    if (showCard) {
+                        console.log(`显示医生: ${card.querySelector('.doctor-name')?.textContent || '未知'}, 科室: ${cardDept}`);
+                        card.style.display = 'flex';
+                        card.style.display = 'flex'; // 重复设置确保生效
+                        visibleCount++;
+                    } else {
+                        console.log(`隐藏医生: ${card.querySelector('.doctor-name')?.textContent || '未知'}, 科室: ${cardDept}`);
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 更新计数显示
+                doctorCount.textContent = `共${visibleCount}个医生 / 1/${Math.ceil(visibleCount / 10)}`;
+                
+                // 应用排序
+                sortDoctors();
+            }
+            
+            // 排序医生
+            function sortDoctors() {
+                const visibleCards = Array.from(doctorCards).filter(card => card.style.display !== 'none');
+                
+                visibleCards.sort((a, b) => {
+                    let valueA, valueB;
+                    
+                    switch(currentSort) {
+                        case 'appointment':
+                            valueA = parseInt(a.dataset.appointments);
+                            valueB = parseInt(b.dataset.appointments);
+                            break;
+                        case 'rating':
+                            valueA = parseInt(a.dataset.rating);
+                            valueB = parseInt(b.dataset.rating);
+                            break;
+                        case 'score':
+                            valueA = parseFloat(a.dataset.score);
+                            valueB = parseFloat(b.dataset.score);
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    return valueB - valueA; // 降序排列
+                });
+                
+                // 重新排列可见的卡片 - 使用指定的容器ID
+                const doctorListContainer = document.getElementById('doctor-list-container');
+                
+                if (doctorListContainer) {
+                    // 先清空容器
+                    doctorListContainer.innerHTML = '';
+                    
+                    // 添加可见的医生卡片
+                    visibleCards.forEach(card => {
+                        // 克隆卡片以确保显示正确
+                        const cardClone = card.cloneNode(true);
+                        doctorListContainer.appendChild(cardClone);
+                    });
+                    
+                    // 如果没有可见卡片，显示提示信息
+                    if (visibleCards.length === 0) {
+                        doctorListContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; font-size: 16px;">暂无符合条件的医生，请尝试其他筛选条件</div>';
+                    }
+                } else {
+                    console.error('医生列表容器不存在');
+                }
+            }
+            
+            // 添加科室筛选事件 - 增强版本
+            deptFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    console.log('科室筛选按钮被点击:', this.textContent.trim(), 'data-dept:', this.dataset.dept);
+                    
+                    // 先重置所有按钮样式
+                    deptFilters.forEach(f => {
+                        f.style.backgroundColor = '#f5f5f5';
+                        f.style.color = '#333';
+                    });
+                    
+                    // 首先尝试使用data-dept属性
+                    let deptValue = this.dataset.dept;
+                    // 如果data-dept为空或不是'all'，则使用文本内容
+                    if (!deptValue || deptValue === 'all') {
+                        deptValue = this.textContent.trim();
+                    }
+                    window.currentFilters.dept = deptValue;
+                    console.log(`设置科室筛选值: ${deptValue}`);
+                    
+                    // 强制更新当前按钮样式
+                    this.style.backgroundColor = '#00a0e9';
+                    this.style.color = 'white';
+                    this.style.backgroundColor = '#00a0e9'; // 重复设置确保生效
+                    
+                    // 强制应用筛选
+                    console.log('准备应用筛选...');
+                    applyFilters();
+                    
+                    // 确保筛选生效
+                    setTimeout(() => {
+                        applyFilters();
+                    }, 50);
+                    
+                    // 更新筛选显示
+                    if (typeof updateSelectedFiltersDisplay === 'function') {
+                        updateSelectedFiltersDisplay();
+                    }
+                });
+            });
+            
+            // 为了确保科室筛选按钮和医生卡片的data-dept值完全匹配
+            // 我们在页面加载时添加一次修复，确保所有值都是标准化的
+            document.addEventListener('DOMContentLoaded', function() {
+                // 标准化科室筛选按钮的data-dept值
+                deptFilters.forEach(filter => {
+                    if (filter.dataset.dept) {
+                        filter.dataset.dept = filter.dataset.dept.trim();
+                    }
+                });
+                
+                // 标准化医生卡片的data-dept值
+                doctorCards.forEach(card => {
+                    if (card.dataset.dept) {
+                        card.dataset.dept = card.dataset.dept.trim();
+                    }
+                });
+            });
+            
+            // 添加职称筛选事件
+            titleFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    currentFilters.title = this.dataset.title;
+                    updateFilterButtonStyle(titleFilters, currentFilters.title);
+                    updateSelectedFiltersDisplay();
+                    applyFilters();
+                });
+            });
+            
+            // 添加服务筛选事件
+            serviceFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // 服务筛选允许多选
+                    if (this.dataset.service === currentFilters.service) {
+                        currentFilters.service = 'all';
+                    } else {
+                        currentFilters.service = this.dataset.service;
+                    }
+                    updateFilterButtonStyle(serviceFilters, currentFilters.service);
+                    updateSelectedFiltersDisplay();
+                    applyFilters();
+                });
+            });
+            
+            // 添加排序事件
+            sortSelect.addEventListener('change', function() {
+                currentSort = this.value;
+                sortDoctors();
+            });
+            
+            // 更新已选筛选条件显示
+            function updateSelectedFiltersDisplay() {
+                const selectedFiltersContainer = document.getElementById('selectedFilters');
+                selectedFiltersContainer.innerHTML = '<span style="color: #666; font-size: 16px;">已选条件：</span>';
+                
+                // 添加科室筛选条件
+                if (currentFilters.dept !== 'all') {
+                    const deptFilterTag = document.createElement('span');
+                    deptFilterTag.className = 'filter-tag';
+                    deptFilterTag.style.backgroundColor = '#e6f3fa';
+                    deptFilterTag.style.color = '#00a0e9';
+                    deptFilterTag.style.padding = '5px 12px';
+                    deptFilterTag.style.borderRadius = '4px';
+                    deptFilterTag.style.display = 'inline-flex';
+                    deptFilterTag.style.alignItems = 'center';
+                    deptFilterTag.style.fontSize = '16px';
+                    deptFilterTag.style.marginLeft = '15px';
+                    deptFilterTag.innerHTML = `科室类型：${currentFilters.dept} <span style="margin-left: 8px; cursor: pointer; font-size: 18px;">×</span>`;
+                    deptFilterTag.querySelector('span').addEventListener('click', function() {
+                        currentFilters.dept = 'all';
+                        updateFilterButtonStyle(deptFilters, currentFilters.dept);
+                        updateSelectedFiltersDisplay();
+                        applyFilters();
+                    });
+                    selectedFiltersContainer.appendChild(deptFilterTag);
+                }
+                
+                // 添加职称筛选条件
+                if (currentFilters.title !== 'all') {
+                    const titleFilterTag = document.createElement('span');
+                    titleFilterTag.className = 'filter-tag';
+                    titleFilterTag.style.backgroundColor = '#e6f3fa';
+                    titleFilterTag.style.color = '#00a0e9';
+                    titleFilterTag.style.padding = '5px 12px';
+                    titleFilterTag.style.borderRadius = '4px';
+                    titleFilterTag.style.display = 'inline-flex';
+                    titleFilterTag.style.alignItems = 'center';
+                    titleFilterTag.style.fontSize = '16px';
+                    titleFilterTag.style.marginLeft = '15px';
+                    titleFilterTag.innerHTML = `医生职称：${currentFilters.title} <span style="margin-left: 8px; cursor: pointer; font-size: 18px;">×</span>`;
+                    titleFilterTag.querySelector('span').addEventListener('click', function() {
+                        currentFilters.title = 'all';
+                        updateFilterButtonStyle(titleFilters, currentFilters.title);
+                        updateSelectedFiltersDisplay();
+                        applyFilters();
+                    });
+                    selectedFiltersContainer.appendChild(titleFilterTag);
+                }
+                
+                // 添加服务筛选条件
+                if (currentFilters.service !== 'all') {
+                    const serviceNames = {
+                        'registration': '挂号',
+                        'consultation': '咨询',
+                        'private': '私人医生'
+                    };
+                    const serviceFilterTag = document.createElement('span');
+                    serviceFilterTag.className = 'filter-tag';
+                    serviceFilterTag.style.backgroundColor = '#e6f3fa';
+                    serviceFilterTag.style.color = '#00a0e9';
+                    serviceFilterTag.style.padding = '5px 12px';
+                    serviceFilterTag.style.borderRadius = '4px';
+                    serviceFilterTag.style.display = 'inline-flex';
+                    serviceFilterTag.style.alignItems = 'center';
+                    serviceFilterTag.style.fontSize = '16px';
+                    serviceFilterTag.style.marginLeft = '15px';
+                    serviceFilterTag.innerHTML = `开通服务：${serviceNames[currentFilters.service]} <span style="margin-left: 8px; cursor: pointer; font-size: 18px;">×</span>`;
+                    serviceFilterTag.querySelector('span').addEventListener('click', function() {
+                        currentFilters.service = 'all';
+                        updateFilterButtonStyle(serviceFilters, currentFilters.service);
+                        updateSelectedFiltersDisplay();
+                        applyFilters();
+                    });
+                    selectedFiltersContainer.appendChild(serviceFilterTag);
+                }
+                
+                // 如果没有选择任何筛选条件，显示默认信息
+                if (currentFilters.dept === 'all' && currentFilters.title === 'all' && currentFilters.service === 'all') {
+                    const defaultTag = document.createElement('span');
+                    defaultTag.style.backgroundColor = '#e6f3fa';
+                    defaultTag.style.color = '#00a0e9';
+                    defaultTag.style.padding = '5px 12px';
+                    defaultTag.style.borderRadius = '4px';
+                    defaultTag.style.display = 'inline-flex';
+                    defaultTag.style.alignItems = 'center';
+                    defaultTag.style.fontSize = '16px';
+                    defaultTag.style.marginLeft = '15px';
+                    defaultTag.innerHTML = '全部科室 <span style="margin-left: 8px; cursor: pointer; font-size: 18px;">×</span>';
+                    defaultTag.querySelector('span').addEventListener('click', function() {
+                        // 已经是默认状态，无需操作
+                    });
+                    selectedFiltersContainer.appendChild(defaultTag);
+                }
+            }
+            
+            // 初始化筛选
+            updateFilterButtonStyle(deptFilters, currentFilters.dept);
+            updateFilterButtonStyle(titleFilters, currentFilters.title);
+            updateFilterButtonStyle(serviceFilters, currentFilters.service);
+            updateSelectedFiltersDisplay();
+            applyFilters();
+            
+            // 添加一个简单的科室筛选测试函数
+            window.testDepartmentFilter = function() {
+                console.log('开始测试科室筛选功能...');
+                
+                // 获取所有医生卡片
+                const cards = document.querySelectorAll('.doctor-card');
+                const departments = new Set();
+                
+                // 收集所有存在的科室
+                cards.forEach(card => {
+                    if (card.dataset.dept) {
+                        departments.add(card.dataset.dept.trim());
+                    }
+                });
+                
+                console.log('发现的科室:', Array.from(departments));
+                
+                // 测试每个科室的筛选
+                Array.from(departments).forEach(dept => {
+                    if (dept !== 'all') {
+                        console.log(`测试科室: ${dept}`);
+                        const matchingCards = Array.from(cards).filter(card => 
+                            card.dataset.dept && card.dataset.dept.trim() === dept
+                        );
+                        console.log(`  匹配到 ${matchingCards.length} 个医生`);
+                    }
+                });
+                
+                console.log('科室筛选测试完成');
+            };
+            applyFilters();
+        });
+        </script>
+</body> 
+</html>

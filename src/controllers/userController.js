@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { sendVerificationSms } = require('../utils/smsService');
+const { sendVerificationSms, verifySmsCode } = require('../utils/smsService');
 require('dotenv').config();
 
 // JWT相关配置
@@ -234,21 +234,20 @@ exports.verifyUser = async (req, res) => {
 // 存储验证码（实际项目中应该使用Redis等持久化存储）
 const verificationCodes = {};
 
-// 发送验证码
+// 发送验证码（忘记密码第一步）
 exports.sendVerificationCode = async (req, res) => {
   try {
-    const { username, phone } = req.body;
+    const { phone } = req.body;
     
-    // 基本验证
-    if (!username || !phone) {
+    if (!phone) {
       return res.status(400).json({
         code: 400,
-        message: '请输入用户名和手机号',
+        message: '请提供手机号',
         data: null
       });
     }
     
-    // 手机号格式验证
+    // 验证手机号格式
     const phoneRegex = /^1[3-9]\d{9}$/;
     if (!phoneRegex.test(phone)) {
       return res.status(400).json({
@@ -258,45 +257,44 @@ exports.sendVerificationCode = async (req, res) => {
       });
     }
     
-    // 查找用户 - 同时验证用户名和手机号
-    const user = await User.findOne({ where: { username, phone } });
+    // 查找用户是否存在
+    const user = await User.findOne({ where: { phone } });
     if (!user) {
       return res.status(404).json({
         code: 404,
-        message: '用户名与手机号不匹配或未注册',
+        message: '该手机号未注册',
         data: null
       });
     }
     
-    // 生成验证码
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // 通过smsService发送验证码（会自动存储到数据库）
+    const smsResult = await sendVerificationSms(phone, user.username, 'reset_password');
     
-    // 存储验证码（有效期5分钟）- 使用username+phone作为键
-    const key = `${username}_${phone}`;
-    verificationCodes[key] = {
-      code,
-      expires: Date.now() + 5 * 60 * 1000,
-      userId: user.userId,
-      phone: user.phone
-    };
-    
-    // 调用短信服务发送验证码
-    const smsSent = await sendVerificationSms(phone, username, code);
-    
-    if (!smsSent) {
+    if (!smsResult.success) {
       return res.status(500).json({
         code: 500,
-        message: '发送验证码短信失败，请稍后重试',
+        message: smsResult.error || '发送验证码失败',
         data: null
       });
     }
     
-    console.log(`验证码短信已发送到: ${phone}`);
+    // 生成临时令牌（用于验证身份）
+    const tempToken = jwt.sign(
+      {
+        userId: user.userId,
+        username: user.username,
+        phone: user.phone
+      },
+      JWT_SECRET,
+      { expiresIn: '10m' }
+    );
     
     res.status(200).json({
       code: 200,
-      message: '验证码已发送',
-      data: null
+      message: '验证码发送成功',
+      data: {
+        tempToken: tempToken
+      }
     });
   } catch (error) {
     console.error('发送验证码失败:', error);
@@ -308,74 +306,78 @@ exports.sendVerificationCode = async (req, res) => {
   }
 };
 
-// 验证验证码
+// 验证验证码（忘记密码第二步）
 exports.verifyCode = async (req, res) => {
   try {
-    const { username, phone, code } = req.body;
+    const { tempToken, code } = req.body;
     
-    // 基本验证
-    if (!username || !phone || !code) {
+    if (!tempToken || !code) {
       return res.status(400).json({
         code: 400,
-        message: '请输入用户名、手机号和验证码',
+        message: '请提供临时令牌和验证码',
         data: null
       });
     }
     
-    // 验证码格式验证
-    const codeRegex = /^\d{6}$/;
-    if (!codeRegex.test(code)) {
-      return res.status(400).json({
-        code: 400,
-        message: '验证码格式不正确',
+    // 验证临时令牌
+    let decoded;
+    try {
+      decoded = jwt.verify(tempToken, JWT_SECRET);
+    } catch (error) {
+      return res.status(401).json({
+        code: 401,
+        message: '无效的临时令牌',
         data: null
       });
     }
     
-    // 使用username+phone作为键检查验证码
-    const key = `${username}_${phone}`;
-    const storedCode = verificationCodes[key];
-    if (!storedCode) {
+    // 通过smsService验证验证码
+    const verifyResult = await verifySmsCode(decoded.phone, code, 'reset_password');
+    
+    if (!verifyResult.valid) {
       return res.status(400).json({
         code: 400,
-        message: '请先发送验证码',
+        message: verifyResult.error || '验证码错误',
         data: null
       });
     }
     
-    // 检查验证码是否过期
-    if (Date.now() > storedCode.expires) {
-      delete verificationCodes[key];
-      return res.status(400).json({
-        code: 400,
-        message: '验证码已过期，请重新发送',
+    // 查找用户
+    const user = await User.findOne({ where: { userId: decoded.userId } });
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: '用户不存在',
         data: null
       });
     }
     
-    // 验证验证码
-    if (storedCode.code !== code) {
-      return res.status(400).json({
-        code: 400,
-        message: '验证码错误',
+    // 验证用户信息一致性
+    if (user.username !== decoded.username || user.phone !== decoded.phone) {
+      return res.status(401).json({
+        code: 401,
+        message: '用户信息不匹配',
         data: null
       });
     }
     
-    // 生成重置令牌（有效期10分钟）
+    // 生成重置密码令牌
     const resetToken = jwt.sign(
-      { username, phone: storedCode.phone, userId: storedCode.userId },
+      {
+        userId: user.userId,
+        username: user.username,
+        phone: user.phone
+      },
       JWT_SECRET,
-      { expiresIn: '10m' }
+      { expiresIn: '15m' }
     );
-    
-    // 清除已验证的验证码
-    delete verificationCodes[key];
     
     res.status(200).json({
       code: 200,
       message: '验证码验证成功',
-      data: { resetToken }
+      data: {
+        resetToken: resetToken
+      }
     });
   } catch (error) {
     console.error('验证验证码失败:', error);

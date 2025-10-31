@@ -4,8 +4,11 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./config/database');
 const corsOptions = require('./config/cors');
 const userRoutes = require('./routes/userRoutes');
-const captchaRoutes = require('./routes/captchaRoutes');
+const doctorRoutes = require('./routes/doctorRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
 const { verifySmsConfig } = require('./utils/smsService');
+const smsRoutes = require('./routes/smsRoutes'); // 导入短信验证码路由
 
 // 加载环境变量
 dotenv.config();
@@ -19,7 +22,10 @@ app.use(express.json());
 
 // 路由
 app.use('/api/users', userRoutes);
-app.use('/api/captcha', captchaRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/sms', smsRoutes); // 使用短信验证码路由
 
 app.get('/', (req, res) => {
   res.send('医院管理系统后端API');
